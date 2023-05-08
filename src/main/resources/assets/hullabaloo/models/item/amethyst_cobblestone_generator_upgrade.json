@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "hullabaloo:item/cobblestone_generator_upgrades/amethyst_cobblestone_generator_upgrade"
+  }
+}

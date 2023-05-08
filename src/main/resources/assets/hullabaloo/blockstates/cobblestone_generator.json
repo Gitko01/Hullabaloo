@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "hullabaloo:block/cobblestone_generator" }
+  }
+}

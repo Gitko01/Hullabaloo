@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#N#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "hullabaloo:netherite_cobblestone_generator_upgrade"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "result": {
+    "item": "hullabaloo:ultimate_cobblestone_generator_upgrade",
+    "count": 1
+  }
+}

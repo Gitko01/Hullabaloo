@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "hullabaloo:block/vacuum_hopper_4"
+  }
+}

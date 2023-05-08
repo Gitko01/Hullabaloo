@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "hullabaloo",
+	"version": "${version}",
+	"name": "Hullabaloo",
+	"description": "A random collection of things I thought would be nice to have in Minecraft",
+	"authors": [
+		"Gitko"
+	],
+	"contact": {
+		"homepage": "https://gitko01.github.io/",
+		"sources": "https://github.com/Gitko01/Hullabaloo"
+	},
+	"license": "CPMML v1.1",
+	"icon": "assets/hullabaloo/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.gitko.hullabaloo.Hullabaloo"
+		],
+		"client": [
+			"net.gitko.hullabaloo.client.HullabalooClient"
+		]
+	},
+	"mixins": [
+		"hullabaloo.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.19",
+		"minecraft": "~1.19.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {}
+}

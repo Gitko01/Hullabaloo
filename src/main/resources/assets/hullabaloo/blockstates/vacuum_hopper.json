@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "anim=1": { "model": "hullabaloo:block/vacuum_hopper_1" },
+    "anim=2": { "model": "hullabaloo:block/vacuum_hopper_2" },
+    "anim=3": { "model": "hullabaloo:block/vacuum_hopper_3" },
+    "anim=4": { "model": "hullabaloo:block/vacuum_hopper_4" }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "hullabaloo:block/block_activator/block_activator-sides",
+    "down": "hullabaloo:block/block_activator/block_activator-sides",
+    "up": "hullabaloo:block/block_activator/block_activator-sides",
+    "north": "hullabaloo:block/block_activator/block_activator-front-2",
+    "east": "hullabaloo:block/block_activator/block_activator-sides",
+    "south": "hullabaloo:block/block_activator/block_activator-sides",
+    "west": "hullabaloo:block/block_activator/block_activator-sides"
+  }
+}
