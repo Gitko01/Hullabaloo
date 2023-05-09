@@ -1,6 +1,17 @@
 # Hullabaloo
 ![Mod icon](/src/main/resources/assets/hullabaloo/icon.png "Mod icon")
 ### A random collection of things I thought would be nice to have in Minecraft
+#### Vacuum Hopper
+A hopper that sucks items off of the ground.
+
+#### Mob Attractor
+A block that teleports many entities (using LOTS of energy) in a large radius onto a single block.
+
+#### Cobblestone Generator
+An upgradeable cobblestone generator that can produce incredible amounts of cobblestone.
+
+#### Block Activator
+A block that can break blocks, place blocks, use items, and attack entities using energy and (optionally) tools.
 
 # Download
 There are a couple places you can download this mod from.
@@ -28,6 +39,7 @@ The original block activator (autonomous activator) was first created in Thermal
 
 # Future Features / Versions
 - 1.19.2
+- A slot specifically for a block activator's tool
 
 # Building Mod
 1. Download source code for this mod
