@@ -20,7 +20,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import org.joml.Vector3f;
+import net.minecraft.util.math.Vec3f;
 
 import java.util.Optional;
 
@@ -30,7 +30,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
 
     MobAttractorScreenHandler screenHandler;
     private BlockPos blockPos;
-    private Vector3f range;
+    private Vec3f range;
 
     private SliderWidget rangeXScrollbar = null;
     private SliderWidget rangeYScrollbar = null;
@@ -45,7 +45,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
 
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (width - backgroundWidth) / 2;
@@ -178,19 +178,19 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
 
         if (rangeXScrollbar == null) {
             rangeXScrollbar = this.addDrawableChild(createRangeWidget(
-                    x, y, 5, 5, 166, 20, Text.translatable("gui." + Hullabaloo.MOD_ID + ".mob_attractor.rangeSlider.x"), range.x(), MobAttractorBlockEntity.MAX_RANGE, client, new Vector3f(1,0,0))
+                    x, y, 5, 5, 166, 20, Text.translatable("gui." + Hullabaloo.MOD_ID + ".mob_attractor.rangeSlider.x"), range.getX(), MobAttractorBlockEntity.MAX_RANGE, client, new Vec3f(1,0,0))
             );
         }
 
         if (rangeYScrollbar == null) {
             rangeYScrollbar = this.addDrawableChild(createRangeWidget(
-                    x, y, 5, 26, 166, 20, Text.translatable("gui." + Hullabaloo.MOD_ID + ".mob_attractor.rangeSlider.y"), range.y(), MobAttractorBlockEntity.MAX_RANGE, client, new Vector3f(0,1,0))
+                    x, y, 5, 26, 166, 20, Text.translatable("gui." + Hullabaloo.MOD_ID + ".mob_attractor.rangeSlider.y"), range.getY(), MobAttractorBlockEntity.MAX_RANGE, client, new Vec3f(0,1,0))
             );
         }
 
         if (rangeZScrollbar == null) {
             rangeZScrollbar = this.addDrawableChild(createRangeWidget(
-                    x, y, 5, 47, 166, 20, Text.translatable("gui." + Hullabaloo.MOD_ID + ".mob_attractor.rangeSlider.z"), range.z(), MobAttractorBlockEntity.MAX_RANGE, client, new Vector3f(0,0,1))
+                    x, y, 5, 47, 166, 20, Text.translatable("gui." + Hullabaloo.MOD_ID + ".mob_attractor.rangeSlider.z"), range.getZ(), MobAttractorBlockEntity.MAX_RANGE, client, new Vec3f(0,0,1))
             );
         }
 
@@ -199,7 +199,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
         }
     }
 
-    public SliderWidget createRangeWidget(int x, int y, int xMargin, int yMargin, int width, int height, Text text, double defaultValue, double maxValue, MinecraftClient client, Vector3f axis) {
+    public SliderWidget createRangeWidget(int x, int y, int xMargin, int yMargin, int width, int height, Text text, double defaultValue, double maxValue, MinecraftClient client, Vec3f axis) {
         return new SliderWidget(x + xMargin, y + yMargin, width, height, Text.literal(text.getString() + defaultValue), defaultValue / maxValue) {
             @Override
             protected void updateMessage() {
@@ -217,19 +217,19 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
         };
     }
 
-    private void updateRange(float range, Vector3f axis, MinecraftClient client) {
+    private void updateRange(float range, Vec3f axis, MinecraftClient client) {
         client.execute(() -> {
             PacketByteBuf buf = PacketByteBufs.create();
 
-            if (axis.x == 1 && axis.y == 0 && axis.z == 0) {
-                this.range = new Vector3f(range, this.range.y(), this.range.z());
-                buf.writeVector3f(this.range);
-            } else if (axis.x == 0 && axis.y == 1 && axis.z == 0) {
-                this.range = new Vector3f(this.range.x(), range, this.range.z());
-                buf.writeVector3f(this.range);
-            } else if (axis.x == 0 && axis.y == 0 && axis.z == 1) {
-                this.range = new Vector3f(this.range.x(), this.range.y(), range);
-                buf.writeVector3f(this.range);
+            if (axis.getX() == 1 && axis.getY() == 0 && axis.getZ() == 0) {
+                this.range = new Vec3f(range, this.range.getY(), this.range.getZ());
+                buf.writeBlockPos(new BlockPos(this.range.getX(), this.range.getY(), this.range.getZ()));
+            } else if (axis.getX() == 0 && axis.getY() == 1 && axis.getZ() == 0) {
+                this.range = new Vec3f(this.range.getX(), range, this.range.getZ());
+                buf.writeBlockPos(new BlockPos(this.range.getX(), this.range.getY(), this.range.getZ()));
+            } else if (axis.getX() == 0 && axis.getY() == 0 && axis.getZ() == 1) {
+                this.range = new Vec3f(this.range.getX(), this.range.getY(), range);
+                buf.writeBlockPos(new BlockPos(this.range.getX(), this.range.getY(), this.range.getZ()));
             } else {
                 Hullabaloo.LOGGER.error("[Hullabaloo] Error in updating the range for a Mob Attractor! If you are a Fabric mod dev, please check out the update range method in MobAttractorScreen.");
             }
@@ -249,7 +249,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
         }
     }
 
-    private static Vector3f getRange(ScreenHandler handler) {
+    private static Vec3f getRange(ScreenHandler handler) {
         if (handler instanceof MobAttractorScreenHandler) {
             return ((MobAttractorScreenHandler) handler).getRange();
         } else {

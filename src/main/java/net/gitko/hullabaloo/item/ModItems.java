@@ -1,7 +1,6 @@
 package net.gitko.hullabaloo.item;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.item.custom.VacuumFilterItem;
 import net.minecraft.client.gui.screen.Screen;
@@ -9,10 +8,9 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,20 +30,16 @@ public class ModItems {
 
     // basic item with no tooltip
     public static Item registerItem(FabricItemSettings itemSettings, String name, ItemGroup itemGroup) {
-        Item newItem = new Item(itemSettings);
+        Item newItem = new Item(itemSettings.group(itemGroup));
 
-        Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), newItem);
-        // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(newItem);
-        });
+        Registry.register(Registry.ITEM, new Identifier(Hullabaloo.MOD_ID, name), newItem);
 
         return newItem;
     }
 
     // basic item with tooltip
     public static Item registerItem(FabricItemSettings itemSettings, String name, ItemGroup itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
-        Item newItem = new Item(itemSettings) {
+        Item newItem = new Item(itemSettings.group(itemGroup)) {
             @Override
             public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
                 if (holdDownShift) {
@@ -70,22 +64,14 @@ public class ModItems {
             }
         };
 
-        Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), newItem);
-        // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(newItem);
-        });
+        Registry.register(Registry.ITEM, new Identifier(Hullabaloo.MOD_ID, name), newItem);
 
         return newItem;
     }
 
     // advanced item
-    public static Item registerItem(Item item, String name, ItemGroup itemGroup) {
-        Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), item);
-        // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(item);
-        });
+    public static Item registerItem(Item item, String name) {
+        Registry.register(Registry.ITEM, new Identifier(Hullabaloo.MOD_ID, name), item);
 
         return item;
     }
@@ -95,7 +81,7 @@ public class ModItems {
                 "screwdriver", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".screwdriver", 2, true
         );
 
-        VACUUM_FILTER = registerItem(new VacuumFilterItem(new FabricItemSettings().maxCount(1)), "vacuum_filter", ModItemGroup.TAB);
+        VACUUM_FILTER = registerItem(new VacuumFilterItem(new FabricItemSettings().maxCount(1).group(ModItemGroup.TAB)), "vacuum_filter");
 
         IRON_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new FabricItemSettings().maxCount(1),
                 "iron_cobblestone_generator_upgrade", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".iron_cobblestone_generator_upgrade", 1, false

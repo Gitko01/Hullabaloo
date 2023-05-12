@@ -10,9 +10,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -22,9 +22,10 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
 
     private int attractorCooldown = 0;
     public static final int SPEED = 200;
-    private Vector3f range = new Vector3f(64, 64, 64);
+    private Vec3f range = new Vec3f(64, 64, 64);
     public static final int MAX_RANGE = 256;
 
     // Create energy storage
@@ -54,7 +55,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
                 return (int) energyStorage.getAmount();
             } else if (index == 1) {
                 // energy consumption
-                return (int) (range.x() * range.y() * range.z());
+                return (int) (range.getX() * range.getY() * range.getZ());
             } else {
                 return getCooldown();
             }
@@ -79,11 +80,11 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
         if (world.isClient()) return;
 
         // Takes entities in a given range and teleports them near block
-        if (be.attractorCooldown >= SPEED && world.isReceivingRedstonePower(pos) && be.energyStorage.getAmount() >= be.range.x() * be.range.y() * be.range.z()) {
+        if (be.attractorCooldown >= SPEED && world.isReceivingRedstonePower(pos) && be.energyStorage.getAmount() >= be.range.getX() * be.range.getY() * be.range.getZ()) {
             be.attractorCooldown = 0;
-            be.energyStorage.amount -= be.range.x() * be.range.y() * be.range.z();
+            be.energyStorage.amount -= be.range.getX() * be.range.getY() * be.range.getZ();
 
-            List<LivingEntity> entities = world.getEntitiesByClass(LivingEntity.class, Box.of(pos.toCenterPos(), be.range.x(), be.range.y(), be.range.z()), e -> (
+            List<LivingEntity> entities = world.getEntitiesByClass(LivingEntity.class, Box.of(Vec3d.ofCenter(pos), be.range.getX(), be.range.getY(), be.range.getZ()), e -> (
                     e.getType() != EntityType.PLAYER &&
                     e.getType() != EntityType.ARMOR_STAND &&
                     //!e.isInvulnerableTo(dmgSource) &&
@@ -110,7 +111,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
         // used in ScreenHandler
         buf.writeBlockPos(this.getPos());
-        buf.writeVector3f(this.range);
+        buf.writeBlockPos(new BlockPos(this.range.getX(), this.range.getY(), this.range.getZ()));
     }
 
     @Override
@@ -122,14 +123,14 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
 
-        this.range = new Vector3f(nbt.getFloat("rangeX"), nbt.getFloat("rangeY"), nbt.getFloat("rangeZ"));
+        this.range = new Vec3f(nbt.getFloat("rangeX"), nbt.getFloat("rangeY"), nbt.getFloat("rangeZ"));
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
-        nbt.putFloat("rangeX", this.range.x());
-        nbt.putFloat("rangeY", this.range.y());
-        nbt.putFloat("rangeZ", this.range.z());
+        nbt.putFloat("rangeX", this.range.getX());
+        nbt.putFloat("rangeY", this.range.getY());
+        nbt.putFloat("rangeZ", this.range.getZ());
 
         super.writeNbt(nbt);
     }
@@ -159,7 +160,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
         return new MobAttractorScreenHandler(syncId, inv, this.energyAmountPropertyDelegate);
     }
 
-    public void setRange(Vector3f newRange) {
+    public void setRange(Vec3f newRange) {
         this.range = newRange;
     }
 

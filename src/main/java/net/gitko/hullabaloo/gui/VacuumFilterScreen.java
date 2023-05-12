@@ -10,7 +10,6 @@ import net.gitko.hullabaloo.gui.widget.CustomTexturedButtonWidget;
 import net.gitko.hullabaloo.item.custom.VacuumFilterItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -48,7 +47,7 @@ public class VacuumFilterScreen extends HandledScreen<VacuumFilterScreenHandler>
 
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (width - backgroundWidth) / 2;
@@ -72,14 +71,10 @@ public class VacuumFilterScreen extends HandledScreen<VacuumFilterScreenHandler>
 
                     ItemStack itemStack = itemsToFilter.get(itemIndex);
                     if (itemStack != null) {
-                        itemRenderer.renderInGui(matrices, itemStack, x, y);
+                        itemRenderer.renderInGui(itemStack, x, y);
                     }
                 }
             }
-        }
-
-        if (modeButton != null) {
-            modeButton.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".vacuum_filter.mode." + mode)));
         }
     }
 
@@ -134,7 +129,9 @@ public class VacuumFilterScreen extends HandledScreen<VacuumFilterScreenHandler>
             }
 
             modeButton = this.addDrawableChild(createModeWidget(
-                    x, y, 6, 6, 7, 7, u, v, 0, TEXTURE, 256, 256, ButtonWidget::onPress, Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".vacuum_filter.mode." + mode)), Text.literal(""), client));
+                    x, y, 6, 6, 7, 7, u, v, 0, TEXTURE, 256, 256, ButtonWidget::onPress,
+                    (button, matrices, mouseX, mouseY) -> renderTooltip(matrices, Text.translatable("gui." + Hullabaloo.MOD_ID + ".vacuum_filter.mode." + mode), mouseX, mouseY),
+                    Text.literal(""), client));
         }
 
         if (mode == -1) {
@@ -142,8 +139,8 @@ public class VacuumFilterScreen extends HandledScreen<VacuumFilterScreenHandler>
         }
     }
 
-    public CustomTexturedButtonWidget createModeWidget(int x, int y, int xMargin, int yMargin, int width, int height, int u, int v, int hoveredVOffset, Identifier guiTexture, int guiTextureWidth, int guiTextureHeight, ButtonWidget.PressAction pressAction, Tooltip tooltip, Text text, MinecraftClient client) {
-        CustomTexturedButtonWidget buttonWidget = new CustomTexturedButtonWidget(x + xMargin, y + yMargin, width, height, u, v, hoveredVOffset, guiTexture, guiTextureWidth, guiTextureHeight, pressAction, text) {
+    public CustomTexturedButtonWidget createModeWidget(int x, int y, int xMargin, int yMargin, int width, int height, int u, int v, int hoveredVOffset, Identifier guiTexture, int guiTextureWidth, int guiTextureHeight, ButtonWidget.PressAction pressAction, ButtonWidget.TooltipSupplier tooltip, Text text, MinecraftClient client) {
+        CustomTexturedButtonWidget buttonWidget = new CustomTexturedButtonWidget(x + xMargin, y + yMargin, width, height, u, v, hoveredVOffset, guiTexture, guiTextureWidth, guiTextureHeight, pressAction, tooltip, text) {
             @Override
             public void onPress() {
                 if (mode == 1) {
@@ -162,7 +159,6 @@ public class VacuumFilterScreen extends HandledScreen<VacuumFilterScreenHandler>
                 updateMode(mode, client);
             }
         };
-        buttonWidget.setTooltip(tooltip);
         return buttonWidget;
     }
 

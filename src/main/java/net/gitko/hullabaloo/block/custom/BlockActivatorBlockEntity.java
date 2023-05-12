@@ -18,9 +18,9 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -290,7 +290,7 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
                         world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) - 1));
                     }
 
-                    DamageSource dmgSource = world.getDamageSources().playerAttack(be.fakeServerPlayer);
+                    DamageSource dmgSource = DamageSource.player(be.fakeServerPlayer);
                     List<LivingEntity> entities = world.getEntitiesByClass(LivingEntity.class, Box.from(posToHitVec3d), e -> (
                             //e.getType() != EntityType.PLAYER &&
                             //e.getType() != EntityType.ARMOR_STAND &&
@@ -316,7 +316,7 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
                         world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) + 1));
                     }
 
-                    DamageSource dmgSource = world.getDamageSources().playerAttack(be.fakeServerPlayer);
+                    DamageSource dmgSource = DamageSource.player(be.fakeServerPlayer);
                     List<LivingEntity> entities = world.getEntitiesByClass(LivingEntity.class, Box.from(posToHitVec3d), e -> (
                             !e.isInvulnerableTo(dmgSource) &&
                             !e.isDead()

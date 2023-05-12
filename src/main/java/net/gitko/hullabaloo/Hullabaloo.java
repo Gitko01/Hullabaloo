@@ -5,10 +5,9 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.*;
 import net.gitko.hullabaloo.item.ModItems;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.reborn.energy.api.EnergyStorage;
@@ -32,11 +31,11 @@ public class Hullabaloo implements ModInitializer {
         COBBLESTONE_GENERATOR_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(CobblestoneGeneratorScreenHandler::new);
         MOB_ATTRACTOR_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(MobAttractorScreenHandler::new);
 
-        Registry.register(Registries.SCREEN_HANDLER, new Identifier("vacuum_hopper_screen_handler"), VACUUM_HOPPER_SCREEN_HANDLER);
-        Registry.register(Registries.SCREEN_HANDLER, new Identifier("vacuum_filter_screen_handler"), VACUUM_FILTER_SCREEN_HANDLER);
-        Registry.register(Registries.SCREEN_HANDLER, new Identifier("block_activator_screen_handler"), BLOCK_ACTIVATOR_SCREEN_HANDLER);
-        Registry.register(Registries.SCREEN_HANDLER, new Identifier("cobblestone_generator_screen_handler"), COBBLESTONE_GENERATOR_SCREEN_HANDLER);
-        Registry.register(Registries.SCREEN_HANDLER, new Identifier("mob_attractor_screen_handler"), MOB_ATTRACTOR_SCREEN_HANDLER);
+        Registry.register(Registry.SCREEN_HANDLER, new Identifier("vacuum_hopper_screen_handler"), VACUUM_HOPPER_SCREEN_HANDLER);
+        Registry.register(Registry.SCREEN_HANDLER, new Identifier("vacuum_filter_screen_handler"), VACUUM_FILTER_SCREEN_HANDLER);
+        Registry.register(Registry.SCREEN_HANDLER, new Identifier("block_activator_screen_handler"), BLOCK_ACTIVATOR_SCREEN_HANDLER);
+        Registry.register(Registry.SCREEN_HANDLER, new Identifier("cobblestone_generator_screen_handler"), COBBLESTONE_GENERATOR_SCREEN_HANDLER);
+        Registry.register(Registry.SCREEN_HANDLER, new Identifier("mob_attractor_screen_handler"), MOB_ATTRACTOR_SCREEN_HANDLER);
     }
 
     private void initEnergyStorages() {

@@ -4,18 +4,18 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.gitko.hullabaloo.block.custom.VacuumHopperBlockEntity;
 import net.gitko.hullabaloo.item.ModItems;
-import net.gitko.hullabaloo.util.QuaternionUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import org.joml.Vector3f;
+import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3f;
 
 @Environment(EnvType.CLIENT)
 public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<VacuumHopperBlockEntity> {
@@ -54,7 +54,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // north
                         matrices.translate(outputOffset, outputOffset, -negativeCoordDistance - offset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().north());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(0, 90, -45)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 90, -45)));
 
                         renderItem = true;
                     }
@@ -62,7 +62,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // east
                         matrices.translate(positiveCoordDistance + offset, outputOffset, outputOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().east());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(0, 0, -45)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 0, -45)));
 
                         renderItem = true;
                     }
@@ -70,7 +70,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // south
                         matrices.translate(outputOffset, outputOffset, positiveCoordDistance + offset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().south());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(45, -90, 0)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(45, -90, 0)));
 
                         renderItem = true;
                     }
@@ -78,7 +78,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // west
                         matrices.translate(-negativeCoordDistance - offset, outputOffset, outputOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().west());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(180, 0, 135)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(180, 0, 135)));
 
                         renderItem = true;
                     }
@@ -86,7 +86,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // up
                         matrices.translate(outputOffset, positiveCoordDistance + offset, outputOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().up());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(0, 180, 45)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 180, 45)));
 
                         renderItem = true;
                     }
@@ -94,13 +94,13 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // down
                         matrices.translate(outputOffset, -negativeCoordDistance - offset, outputOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().down());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(0, 0, -135)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 0, -135)));
 
                         renderItem = true;
                     }
                 }
 
-                if (renderItem) {MinecraftClient.getInstance().getItemRenderer().renderItem(arrow, ModelTransformationMode.GROUND, newLight, overlay, matrices, vertexConsumers, be.getWorld(), 0);}
+                if (renderItem) {MinecraftClient.getInstance().getItemRenderer().renderItem(arrow, ModelTransformation.Mode.GROUND, newLight, overlay, matrices, vertexConsumers, 0);}
 
                 // Mandatory call after GL calls
                 matrices.pop();
@@ -120,7 +120,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // north
                         matrices.translate(inputOffset, inputOffset, -negativeCoordDistance - offset - inputDistanceOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().north());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(0, 90, 135)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 90, 135)));
 
                         renderItem = true;
                     }
@@ -128,7 +128,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // east
                         matrices.translate(positiveCoordDistance + offset + inputDistanceOffset, inputOffset, inputOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().east());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(0, 0, 135)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 0, 135)));
 
                         renderItem = true;
                     }
@@ -136,7 +136,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // south
                         matrices.translate(inputOffset, inputOffset, positiveCoordDistance + offset + inputDistanceOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().south());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(-135, -90, 0)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(-135, -90, 0)));
 
                         renderItem = true;
                     }
@@ -144,7 +144,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // west
                         matrices.translate(-negativeCoordDistance - offset - inputDistanceOffset, inputOffset, inputOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().west());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(180, 0, -45)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(180, 0, -45)));
 
                         renderItem = true;
                     }
@@ -152,7 +152,7 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // up
                         matrices.translate(inputOffset, positiveCoordDistance + offset + inputDistanceOffset, inputOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().up());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(0, 180, -135)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 180, -135)));
 
                         renderItem = true;
                     }
@@ -160,13 +160,13 @@ public class VacuumHopperBlockEntityRenderer implements BlockEntityRenderer<Vacu
                         // down
                         matrices.translate(inputOffset, -negativeCoordDistance - offset - inputDistanceOffset, inputOffset);
                         newLight = WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().down());
-                        matrices.multiply(QuaternionUtil.fromEulerXyzDegrees(new Vector3f(0, 0, 45)));
+                        matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 0, 45)));
 
                         renderItem = true;
                     }
                 }
 
-                if (renderItem) {MinecraftClient.getInstance().getItemRenderer().renderItem(arrow, ModelTransformationMode.GROUND, newLight, overlay, matrices, vertexConsumers, be.getWorld(), 0);}
+                if (renderItem) {MinecraftClient.getInstance().getItemRenderer().renderItem(arrow, ModelTransformation.Mode.GROUND, newLight, overlay, matrices, vertexConsumers, 0);}
 
                 // Mandatory call after GL calls
                 matrices.pop();

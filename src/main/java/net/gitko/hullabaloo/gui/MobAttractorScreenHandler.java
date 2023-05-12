@@ -10,11 +10,11 @@ import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.math.BlockPos;
-import org.joml.Vector3f;
+import net.minecraft.util.math.Vec3f;
 
 public class MobAttractorScreenHandler extends ScreenHandler {
     private BlockPos pos;
-    private Vector3f range;
+    private Vec3f range;
     PropertyDelegate energyAmountPropertyDelegate;
 
     // This constructor gets called on the client when the server wants it to open the screenHandler,
@@ -23,7 +23,8 @@ public class MobAttractorScreenHandler extends ScreenHandler {
     public MobAttractorScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf packetByteBuf) {
         this(syncId, playerInventory, new ArrayPropertyDelegate(3));
         this.pos = packetByteBuf.readBlockPos();
-        this.range = packetByteBuf.readVector3f();
+        BlockPos range = packetByteBuf.readBlockPos();
+        this.range = new Vec3f(range.getX(), range.getY(), range.getZ());
     }
 
     // This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container
@@ -33,7 +34,7 @@ public class MobAttractorScreenHandler extends ScreenHandler {
 
         // placeholder for server
         pos = BlockPos.ORIGIN;
-        range = new Vector3f();
+        range = new Vec3f();
 
         // energy amount and drain amount
         this.energyAmountPropertyDelegate = energyAmountPropertyDelegate;
@@ -55,7 +56,7 @@ public class MobAttractorScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int slot) {
+    public ItemStack transferSlot(PlayerEntity player, int slot) {
         return null;
     }
 
@@ -68,7 +69,7 @@ public class MobAttractorScreenHandler extends ScreenHandler {
         return this.pos;
     }
 
-    public Vector3f getRange() {
+    public Vec3f getRange() {
         return this.range;
     }
 

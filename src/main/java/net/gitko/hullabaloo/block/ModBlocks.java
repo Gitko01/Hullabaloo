@@ -1,7 +1,6 @@
 package net.gitko.hullabaloo.block;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.gitko.hullabaloo.Hullabaloo;
@@ -15,10 +14,9 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +41,7 @@ public class ModBlocks {
         Block newBlock = new Block(blockSettings);
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
-        Registry.register(Registries.BLOCK, blockId, newBlock);
+        Registry.register(Registry.BLOCK, blockId, newBlock);
         registerBlockItem(newBlock, blockId, itemGroup);
 
         return newBlock;
@@ -51,13 +49,9 @@ public class ModBlocks {
 
     // No tooltip
     public static void registerBlockItem(Block block, Identifier blockId, ItemGroup itemGroup) {
-        BlockItem newBlockItem = new BlockItem(block, new FabricItemSettings());
+        BlockItem newBlockItem = new BlockItem(block, new FabricItemSettings().group(itemGroup));
 
-        Registry.register(Registries.ITEM, blockId, newBlockItem);
-        // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(newBlockItem);
-        });
+        Registry.register(Registry.ITEM, blockId, newBlockItem);
     }
 
     // With tooltip
@@ -65,7 +59,7 @@ public class ModBlocks {
         Block newBlock = new Block(blockSettings);
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
-        Registry.register(Registries.BLOCK, blockId, newBlock);
+        Registry.register(Registry.BLOCK, blockId, newBlock);
         registerBlockItem(newBlock, blockId, itemGroup, tooltipKey, tooltipLineCount, holdDownShift);
 
         return newBlock;
@@ -73,7 +67,7 @@ public class ModBlocks {
 
     // With tooltip
     public static void registerBlockItem(Block block, Identifier blockId, ItemGroup itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
-        BlockItem newBlockItem = new BlockItem(block, new FabricItemSettings()) {
+        BlockItem newBlockItem = new BlockItem(block, new FabricItemSettings().group(itemGroup)) {
             @Override
             public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
                 if (holdDownShift) {
@@ -98,18 +92,14 @@ public class ModBlocks {
             }
         };
 
-        Registry.register(Registries.ITEM, blockId, newBlockItem);
-        // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(newBlockItem);
-        });
+        Registry.register(Registry.ITEM, blockId, newBlockItem);
     }
 
     // No tooltip, advanced block
     public static Block registerBlock(Block newBlock, String name, ItemGroup itemGroup) {
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
-        Registry.register(Registries.BLOCK, blockId, newBlock);
+        Registry.register(Registry.BLOCK, blockId, newBlock);
         registerBlockItem(newBlock, blockId, itemGroup);
 
         return newBlock;
@@ -119,7 +109,7 @@ public class ModBlocks {
     public static Block registerBlock(Block newBlock, String name, ItemGroup itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
-        Registry.register(Registries.BLOCK, blockId, newBlock);
+        Registry.register(Registry.BLOCK, blockId, newBlock);
         registerBlockItem(newBlock, blockId, itemGroup, tooltipKey, tooltipLineCount, holdDownShift);
 
         return newBlock;
@@ -158,25 +148,25 @@ public class ModBlocks {
 
         // Block entities
         VACUUM_HOPPER_BLOCK_ENTITY = Registry.register(
-                Registries.BLOCK_ENTITY_TYPE,
+                Registry.BLOCK_ENTITY_TYPE,
                 new Identifier(Hullabaloo.MOD_ID, "vacuum_hopper_block_entity"),
                 FabricBlockEntityTypeBuilder.create(VacuumHopperBlockEntity::new, VACUUM_HOPPER).build()
         );
 
         BLOCK_ACTIVATOR_BLOCK_ENTITY = Registry.register(
-                Registries.BLOCK_ENTITY_TYPE,
+                Registry.BLOCK_ENTITY_TYPE,
                 new Identifier(Hullabaloo.MOD_ID, "block_activator_block_entity"),
                 FabricBlockEntityTypeBuilder.create(BlockActivatorBlockEntity::new, BLOCK_ACTIVATOR).build()
         );
 
         COBBLESTONE_GENERATOR_BLOCK_ENTITY = Registry.register(
-                Registries.BLOCK_ENTITY_TYPE,
+                Registry.BLOCK_ENTITY_TYPE,
                 new Identifier(Hullabaloo.MOD_ID, "cobblestone_generator_block_entity"),
                 FabricBlockEntityTypeBuilder.create(CobblestoneGeneratorBlockEntity::new, COBBLESTONE_GENERATOR).build()
         );
 
         MOB_ATTRACTOR_BLOCK_ENTITY = Registry.register(
-                Registries.BLOCK_ENTITY_TYPE,
+                Registry.BLOCK_ENTITY_TYPE,
                 new Identifier(Hullabaloo.MOD_ID, "mob_attractor_block_entity"),
                 FabricBlockEntityTypeBuilder.create(MobAttractorBlockEntity::new, MOB_ATTRACTOR).build()
         );

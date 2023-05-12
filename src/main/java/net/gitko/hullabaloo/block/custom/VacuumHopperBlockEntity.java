@@ -22,9 +22,9 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.screen.ScreenHandler;
@@ -38,7 +38,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
@@ -603,7 +602,7 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
     @Nullable
     private static Inventory getInventoryAt(World world, double x, double y, double z) {
         Inventory inventory = null;
-        BlockPos blockPos = BlockPos.ofFloored(x, y, z);
+        BlockPos blockPos = new BlockPos(x, y, z);
         BlockState blockState = world.getBlockState(blockPos);
         Block block = blockState.getBlock();
         if (block instanceof InventoryProvider) {
