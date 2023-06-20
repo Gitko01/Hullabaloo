@@ -36,9 +36,9 @@ public class ModItems {
 
         Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), newItem);
         // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(newItem);
-        });
+        //ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
+        //    content.add(newItem);
+        //});
 
         return newItem;
     }
@@ -72,9 +72,9 @@ public class ModItems {
 
         Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), newItem);
         // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(newItem);
-        });
+        //ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
+        //    content.add(newItem);
+        //});
 
         return newItem;
     }
@@ -83,9 +83,9 @@ public class ModItems {
     public static Item registerItem(Item item, String name, ItemGroup itemGroup) {
         Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), item);
         // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(item);
-        });
+        //ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
+        //    content.add(item);
+        //});
 
         return item;
     }

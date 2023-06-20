@@ -637,7 +637,7 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
         } else if (first.getCount() > first.getMaxCount()) {
             return false;
         } else {
-            return ItemStack.areNbtEqual(first, second);
+            return ItemStack.canCombine(first, second);
         }
     }
 

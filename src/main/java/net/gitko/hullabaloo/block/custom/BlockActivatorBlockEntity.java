@@ -14,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -572,7 +573,7 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
     }
 
     public static boolean breakable(BlockState blockState, Float blockHardness) {
-        return !blockState.getMaterial().isLiquid() && blockState.getBlock() != Blocks.AIR && blockHardness != -1f;
+        return !blockState.isLiquid() && blockState.getBlock() != Blocks.AIR && blockHardness != -1f;
     }
 
     public int getDestroyTickCount() {

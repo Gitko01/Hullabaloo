@@ -9,6 +9,7 @@ import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.BlockActivatorBlockEntity;
 import net.gitko.hullabaloo.gui.widget.CustomTexturedButtonWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -174,13 +175,14 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
     }
 
     @Override
-    protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(DrawContext ctx, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
-        drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
+
+        ctx.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
 
         // progress bar
         int maxUnitFill = BlockActivatorBlockEntity.maxEnergyCapacity;
@@ -204,7 +206,7 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
             fillLength = pBLength;
         }
 
-        drawTexture(matrices, x + xMargin, y + yMargin, 1, 167, fillLength, pBHeight);
+        ctx.drawTexture(TEXTURE, x + xMargin, y + yMargin, 1, 167, fillLength, pBHeight);
 
         // render a tooltip containing energy amount
         if (mouseX >= x + xMargin && mouseX <= (x + xMargin) + pBLength) {
@@ -242,7 +244,7 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
                     tooltip.add(Text.of(""));
                     tooltip.add(Text.translatable("tooltip." + Hullabaloo.MOD_ID + ".hold_shift"));
                 }
-                renderTooltip(matrices, tooltip, mouseX, mouseY);
+                //renderTooltip(matrices, tooltip, mouseX, mouseY);
             }
         }
 
@@ -270,16 +272,17 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
                 tooltip.add(Text.of("§6Drain Rate: -" + drainRate + " E/t§r"));
                 tooltip.add(Text.of("§6Energy to Run Once: -" + singleUseEnergy + " E§r"));
 
-                renderTooltip(matrices, tooltip, mouseX, mouseY);
+                //renderTooltip(matrices, tooltip, mouseX, mouseY);
             }
         }
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, delta);
-        drawMouseoverTooltip(matrices, mouseX, mouseY);
+    public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
+
+        renderBackground(ctx);
+        super.render(ctx, mouseX, mouseY, delta);
+        drawMouseoverTooltip(ctx, mouseX, mouseY);
 
         if (redstoneModeButton != null) {
             redstoneModeButton.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".redstoneMode." + redstoneMode)));

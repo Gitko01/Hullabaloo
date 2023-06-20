@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.MobAttractorBlockEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.SliderWidget;
@@ -44,13 +45,13 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
     }
 
     @Override
-    protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(DrawContext ctx, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
-        drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        ctx.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
 
         // progress bar
         int maxUnitFill = MobAttractorBlockEntity.MAX_ENERGY_CAPACITY;
@@ -76,7 +77,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
             fillLength = pBLength;
         }
 
-        drawTexture(matrices, x + xMargin, y + yMargin, 1, 167, fillLength, pBHeight);
+        ctx.drawTexture(TEXTURE, x + xMargin, y + yMargin, 1, 167, fillLength, pBHeight);
 
         // render a tooltip containing energy amount
         if (mouseX >= x + xMargin && mouseX <= (x + xMargin) + pBLength) {
@@ -114,7 +115,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
                     tooltip.add(Text.of(""));
                     tooltip.add(Text.translatable("tooltip." + Hullabaloo.MOD_ID + ".hold_shift"));
                 }
-                renderTooltip(matrices, tooltip, mouseX, mouseY);
+                //renderTooltip(matrices, tooltip, mouseX, mouseY);
             }
         }
 
@@ -155,16 +156,16 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
                     tooltip.add(Text.of("§4§lBe careful!"));
                 }
 
-                renderTooltip(matrices, tooltip, mouseX, mouseY);
+                //renderTooltip(matrices, tooltip, mouseX, mouseY);
             }
         }
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, delta);
-        drawMouseoverTooltip(matrices, mouseX, mouseY);
+    public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
+        renderBackground(ctx);
+        super.render(ctx, mouseX, mouseY, delta);
+        drawMouseoverTooltip(ctx, mouseX, mouseY);
     }
 
     @Override
