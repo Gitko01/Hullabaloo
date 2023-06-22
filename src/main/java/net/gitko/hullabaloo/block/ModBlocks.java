@@ -8,7 +8,6 @@ import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.*;
 import net.gitko.hullabaloo.item.ModItemGroup;
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
@@ -17,6 +16,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -55,9 +55,9 @@ public class ModBlocks {
 
         Registry.register(Registries.ITEM, blockId, newBlockItem);
         // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(newBlockItem);
-        });
+        //ItemGroupEvents.modifyEntriesEvent(itemGroupKey).register(content -> {
+        //    content.add(newBlockItem);
+        //});
     }
 
     // With tooltip
@@ -100,9 +100,9 @@ public class ModBlocks {
 
         Registry.register(Registries.ITEM, blockId, newBlockItem);
         // add to item group
-        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-            content.add(newBlockItem);
-        });
+        //ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
+        //    content.add(newBlockItem);
+        //});
     }
 
     // No tooltip, advanced block
@@ -128,28 +128,28 @@ public class ModBlocks {
     public static void initBlocks() {
         // Blocks
         VACUUM_HOPPER = registerBlock(
-                new VacuumHopperBlock(FabricBlockSettings.of(Material.METAL)
+                new VacuumHopperBlock(FabricBlockSettings.create()
                     .strength(5f, 6f)
                     .requiresTool()),
                 "vacuum_hopper", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".vacuum_hopper", 4, true
         );
 
         BLOCK_ACTIVATOR = registerBlock(
-                new BlockActivatorBlock(FabricBlockSettings.of(Material.METAL)
+                new BlockActivatorBlock(FabricBlockSettings.create()
                         .strength(5f, 6f)
                         .requiresTool()),
                 "block_activator", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".block_activator", 3, true
         );
 
         COBBLESTONE_GENERATOR = registerBlock(
-                new CobblestoneGeneratorBlock(FabricBlockSettings.of(Material.METAL)
+                new CobblestoneGeneratorBlock(FabricBlockSettings.create()
                         .strength(5f, 6f)
                         .requiresTool()),
                 "cobblestone_generator", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".cobblestone_generator", 2, true
         );
 
         MOB_ATTRACTOR = registerBlock(
-                new MobAttractorBlock(FabricBlockSettings.of(Material.METAL)
+                new MobAttractorBlock(FabricBlockSettings.create()
                         .strength(5f, 6f)
                         .requiresTool()
                 ),
