@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.*;
+import net.gitko.hullabaloo.item.ModItemGroup;
 import net.gitko.hullabaloo.item.ModItems;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -46,6 +47,7 @@ public class Hullabaloo implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ModItemGroup.registerItemGroup();
         ModItems.initItems();
         ModBlocks.initBlocks();
         this.initScreens();

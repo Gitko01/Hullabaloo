@@ -9,6 +9,7 @@ import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.BlockActivatorBlockEntity;
 import net.gitko.hullabaloo.gui.widget.CustomTexturedButtonWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -34,10 +35,6 @@ import java.util.Optional;
 // Handles the rendering side of the GUI (like making sure there is a button image where the ScreenHandler says a button is)
 @Environment(EnvType.CLIENT)
 public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHandler> {
-    // old texture
-    //private static final Identifier TEXTURE = new Identifier("minecraft", "textures/gui/container/dispenser.png");
-
-    // new texture :D
     private static final Identifier TEXTURE = new Identifier(Hullabaloo.MOD_ID, "textures/gui/container/block_activator_gui.png");
 
     BlockActivatorScreenHandler screenHandler;
@@ -244,7 +241,7 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
                     tooltip.add(Text.of(""));
                     tooltip.add(Text.translatable("tooltip." + Hullabaloo.MOD_ID + ".hold_shift"));
                 }
-                //renderTooltip(matrices, tooltip, mouseX, mouseY);
+                ctx.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
             }
         }
 
@@ -272,7 +269,7 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
                 tooltip.add(Text.of("§6Drain Rate: -" + drainRate + " E/t§r"));
                 tooltip.add(Text.of("§6Energy to Run Once: -" + singleUseEnergy + " E§r"));
 
-                //renderTooltip(matrices, tooltip, mouseX, mouseY);
+                ctx.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
             }
         }
     }

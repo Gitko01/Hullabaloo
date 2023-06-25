@@ -1,7 +1,6 @@
 package net.gitko.hullabaloo.block.custom;
 
-import com.mojang.authlib.GameProfile;
-import dev.cafeteria.fakeplayerapi.server.FakeServerPlayer;
+import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.BlockActivatorScreenHandler;
@@ -14,7 +13,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -45,8 +43,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static net.gitko.hullabaloo.util.FakePlayerUtil.createFakePlayerBuilder;
 
 public class BlockActivatorBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory {
     public BlockActivatorBlockEntity(BlockPos pos, BlockState state) {
@@ -153,7 +149,7 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
         packetByteBuf.writeInt(redstoneMode);
     }
 
-    private FakeServerPlayer fakeServerPlayer = null;
+    private FakePlayer fakeServerPlayer = null;
 
     public static void tick(World world, BlockPos pos, BlockState state, BlockActivatorBlockEntity be) {
         // BLOCK PLACE SETTING
@@ -196,10 +192,10 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
                 int randomInt = Random.create().nextInt();
                 UUID randUUID = UUID.randomUUID();
 
+                be.fakeServerPlayer = FakePlayer.get((ServerWorld) world);
+
                 // Player was slain by a block activator
-                be.fakeServerPlayer = createFakePlayerBuilder().create(
-                        world.getServer(), (ServerWorld) world, new GameProfile(randUUID, "a block activator")
-                );
+                be.fakeServerPlayer.setCustomName(Text.of("a block activator"));
 
                 be.fakeServerPlayer.setId(randomInt);
                 be.fakeServerPlayer.setUuid(UUID.randomUUID());

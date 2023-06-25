@@ -8,6 +8,7 @@ import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.*;
 import net.gitko.hullabaloo.item.ModItemGroup;
 import net.minecraft.block.Block;
+import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
@@ -17,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -39,7 +41,7 @@ public class ModBlocks {
     public static BlockEntityType<MobAttractorBlockEntity> MOB_ATTRACTOR_BLOCK_ENTITY;
 
     // No tooltip
-    public static Block registerBlock(FabricBlockSettings blockSettings, String name, ItemGroup itemGroup) {
+    public static Block registerBlock(FabricBlockSettings blockSettings, String name, RegistryKey<ItemGroup> itemGroup) {
         Block newBlock = new Block(blockSettings);
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
@@ -50,18 +52,18 @@ public class ModBlocks {
     }
 
     // No tooltip
-    public static void registerBlockItem(Block block, Identifier blockId, ItemGroup itemGroup) {
+    public static void registerBlockItem(Block block, Identifier blockId, RegistryKey<ItemGroup> itemGroup) {
         BlockItem newBlockItem = new BlockItem(block, new FabricItemSettings());
 
         Registry.register(Registries.ITEM, blockId, newBlockItem);
         // add to item group
-        //ItemGroupEvents.modifyEntriesEvent(itemGroupKey).register(content -> {
-        //    content.add(newBlockItem);
-        //});
+        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
+            content.add(newBlockItem);
+        });
     }
 
     // With tooltip
-    public static Block registerBlock(FabricBlockSettings blockSettings, String name, ItemGroup itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
+    public static Block registerBlock(FabricBlockSettings blockSettings, String name, RegistryKey<ItemGroup> itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
         Block newBlock = new Block(blockSettings);
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
@@ -72,7 +74,7 @@ public class ModBlocks {
     }
 
     // With tooltip
-    public static void registerBlockItem(Block block, Identifier blockId, ItemGroup itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
+    public static void registerBlockItem(Block block, Identifier blockId, RegistryKey<ItemGroup> itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
         BlockItem newBlockItem = new BlockItem(block, new FabricItemSettings()) {
             @Override
             public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
@@ -100,13 +102,13 @@ public class ModBlocks {
 
         Registry.register(Registries.ITEM, blockId, newBlockItem);
         // add to item group
-        //ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-        //    content.add(newBlockItem);
-        //});
+        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
+            content.add(newBlockItem);
+        });
     }
 
     // No tooltip, advanced block
-    public static Block registerBlock(Block newBlock, String name, ItemGroup itemGroup) {
+    public static Block registerBlock(Block newBlock, String name, RegistryKey<ItemGroup> itemGroup) {
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
         Registry.register(Registries.BLOCK, blockId, newBlock);
@@ -116,7 +118,7 @@ public class ModBlocks {
     }
 
     // With tooltip, advanced block
-    public static Block registerBlock(Block newBlock, String name, ItemGroup itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
+    public static Block registerBlock(Block newBlock, String name, RegistryKey<ItemGroup> itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
         Registry.register(Registries.BLOCK, blockId, newBlock);
@@ -129,13 +131,17 @@ public class ModBlocks {
         // Blocks
         VACUUM_HOPPER = registerBlock(
                 new VacuumHopperBlock(FabricBlockSettings.create()
-                    .strength(5f, 6f)
-                    .requiresTool()),
+                        .mapColor(MapColor.IRON_GRAY)
+                        .sounds(BlockSoundGroup.METAL)
+                        .strength(5f, 6f)
+                        .requiresTool()),
                 "vacuum_hopper", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".vacuum_hopper", 4, true
         );
 
         BLOCK_ACTIVATOR = registerBlock(
                 new BlockActivatorBlock(FabricBlockSettings.create()
+                        .mapColor(MapColor.IRON_GRAY)
+                        .sounds(BlockSoundGroup.METAL)
                         .strength(5f, 6f)
                         .requiresTool()),
                 "block_activator", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".block_activator", 3, true
@@ -143,6 +149,8 @@ public class ModBlocks {
 
         COBBLESTONE_GENERATOR = registerBlock(
                 new CobblestoneGeneratorBlock(FabricBlockSettings.create()
+                        .mapColor(MapColor.IRON_GRAY)
+                        .sounds(BlockSoundGroup.METAL)
                         .strength(5f, 6f)
                         .requiresTool()),
                 "cobblestone_generator", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".cobblestone_generator", 2, true
@@ -150,6 +158,8 @@ public class ModBlocks {
 
         MOB_ATTRACTOR = registerBlock(
                 new MobAttractorBlock(FabricBlockSettings.create()
+                        .mapColor(MapColor.IRON_GRAY)
+                        .sounds(BlockSoundGroup.METAL)
                         .strength(5f, 6f)
                         .requiresTool()
                 ),

@@ -16,7 +16,10 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
-	mavenLocal()
+
+	// Don't have any local repos so I won't be needing this for now
+	//mavenLocal()
+
 	maven {
 		name = 'modmenu'
 		url = 'https://maven.terraformersmc.com/releases'
@@ -25,13 +28,6 @@ repositories {
 	maven {
 		name = 'energyApi'
 		url = 'https://maven.fabricmc.net/'
-	}
-
-	maven {
-		url = 'https://maven.cafeteria.dev/releases'
-		content {
-			includeGroup 'dev.cafeteria'
-		}
 	}
 }
 
@@ -46,8 +42,6 @@ dependencies {
 
 	// Dev. mods
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
-
-	modImplementation include ("dev.cafeteria:fake-player-api:${project.fakeplayerapi_version}")
 
 	include modApi("teamreborn:energy:${project.energyapi_version}") {
 		exclude(group: "net.fabricmc.fabric-api")

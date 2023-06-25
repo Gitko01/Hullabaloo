@@ -23,6 +23,7 @@ There are a couple places you can download this mod from.
 # Versions
 - 1.19.2 Fabric
 - 1.19.4 Fabric
+- 1.20.1 Fabric
 
 # Changelog (v1.0.0 -> v1.0.0)
 - Initial release

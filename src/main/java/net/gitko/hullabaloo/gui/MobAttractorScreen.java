@@ -115,7 +115,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
                     tooltip.add(Text.of(""));
                     tooltip.add(Text.translatable("tooltip." + Hullabaloo.MOD_ID + ".hold_shift"));
                 }
-                //renderTooltip(matrices, tooltip, mouseX, mouseY);
+                ctx.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
             }
         }
 
@@ -156,7 +156,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
                     tooltip.add(Text.of("§4§lBe careful!"));
                 }
 
-                //renderTooltip(matrices, tooltip, mouseX, mouseY);
+                ctx.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
             }
         }
     }

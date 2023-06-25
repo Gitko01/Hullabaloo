@@ -11,6 +11,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -31,20 +32,20 @@ public class ModItems {
 
 
     // basic item with no tooltip
-    public static Item registerItem(FabricItemSettings itemSettings, String name, ItemGroup itemGroup) {
+    public static Item registerItem(FabricItemSettings itemSettings, String name, RegistryKey<ItemGroup> itemGroup) {
         Item newItem = new Item(itemSettings);
 
         Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), newItem);
         // add to item group
-        //ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-        //    content.add(newItem);
-        //});
+        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
+            content.add(newItem);
+        });
 
         return newItem;
     }
 
     // basic item with tooltip
-    public static Item registerItem(FabricItemSettings itemSettings, String name, ItemGroup itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
+    public static Item registerItem(FabricItemSettings itemSettings, String name, RegistryKey<ItemGroup> itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
         Item newItem = new Item(itemSettings) {
             @Override
             public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
@@ -72,20 +73,20 @@ public class ModItems {
 
         Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), newItem);
         // add to item group
-        //ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-        //    content.add(newItem);
-        //});
+        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
+            content.add(newItem);
+        });
 
         return newItem;
     }
 
     // advanced item
-    public static Item registerItem(Item item, String name, ItemGroup itemGroup) {
+    public static Item registerItem(Item item, String name, RegistryKey<ItemGroup> itemGroup) {
         Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), item);
         // add to item group
-        //ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
-        //    content.add(item);
-        //});
+        ItemGroupEvents.modifyEntriesEvent(itemGroup).register(content -> {
+            content.add(item);
+        });
 
         return item;
     }
