@@ -3,6 +3,7 @@ package net.gitko.hullabaloo.gui.widget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
@@ -47,6 +48,6 @@ public class CustomTexturedButtonWidget extends ButtonWidget {
     }
 
     public void renderButton(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        this.drawTexture(ctx, this.guiTexture, this.getX(), this.getY(), this.u, this.v, this.hoveredVOffset, this.width, this.height, this.guiTextureWidth, this.guiTextureHeight);
+        ctx.drawTexture(this.guiTexture, this.getX(), this.getY(), this.u, this.v, this.width, this.height, this.guiTextureWidth, this.guiTextureHeight);
     }
 }

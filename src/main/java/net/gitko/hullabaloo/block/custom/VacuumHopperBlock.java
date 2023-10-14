@@ -51,7 +51,7 @@ public class VacuumHopperBlock extends BlockWithEntity {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlocks.VACUUM_HOPPER_BLOCK_ENTITY, (world1, pos, state1, be) -> VacuumHopperBlockEntity.tick(world1, pos, state1, (VacuumHopperBlockEntity) be));
+        return validateTicker(type, ModBlocks.VACUUM_HOPPER_BLOCK_ENTITY, VacuumHopperBlockEntity::tick);
     }
 
     @Override

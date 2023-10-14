@@ -44,7 +44,7 @@ public class MobAttractorBlock extends BlockWithEntity {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlocks.MOB_ATTRACTOR_BLOCK_ENTITY, (world1, pos, state1, be) -> MobAttractorBlockEntity.tick(world1, pos, state1, (MobAttractorBlockEntity) be));
+        return validateTicker(type, ModBlocks.MOB_ATTRACTOR_BLOCK_ENTITY, MobAttractorBlockEntity::tick);
     }
 
     @Override

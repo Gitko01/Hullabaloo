@@ -56,7 +56,7 @@ public class BlockActivatorBlock extends BlockWithEntity {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlocks.BLOCK_ACTIVATOR_BLOCK_ENTITY, (world1, pos, state1, be) -> BlockActivatorBlockEntity.tick(world1, pos, state1, be));
+        return validateTicker(type, ModBlocks.BLOCK_ACTIVATOR_BLOCK_ENTITY, BlockActivatorBlockEntity::tick);
     }
 
     @Override

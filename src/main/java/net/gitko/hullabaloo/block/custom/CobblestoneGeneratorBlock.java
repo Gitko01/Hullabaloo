@@ -50,7 +50,7 @@ public class CobblestoneGeneratorBlock extends BlockWithEntity {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlocks.COBBLESTONE_GENERATOR_BLOCK_ENTITY, (world1, pos, state1, be) -> CobblestoneGeneratorBlockEntity.tick(world1, pos, state1, (CobblestoneGeneratorBlockEntity) be));
+        return validateTicker(type, ModBlocks.COBBLESTONE_GENERATOR_BLOCK_ENTITY, CobblestoneGeneratorBlockEntity::tick);
     }
 
     @Override
