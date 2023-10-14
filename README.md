@@ -20,11 +20,6 @@ There are a couple places you can download this mod from.
 3. [GitHub](https://github.com/Gitko01/Hullabaloo/releases)
 4. [My website](https://gitko01.github.io)
 
-# Versions
-- 1.19.2 Fabric
-- 1.19.4 Fabric
-- 1.20.1 Fabric
-
 # Changelog (v1.0.0 -> v1.0.0)
 - Initial release
 
