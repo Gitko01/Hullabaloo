@@ -1,5 +1,6 @@
 package net.gitko.hullabaloo.block.custom;
 
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.item.ModItems;
@@ -29,6 +30,11 @@ public class VacuumHopperBlock extends BlockWithEntity {
         setDefaultState(getDefaultState()
                 .with(IntProperty.of("anim", 1, 4), 1)
         );
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return null;
     }
 
     @Override

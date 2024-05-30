@@ -20,17 +20,17 @@ public class CustomTexturedButtonWidget extends ButtonWidget {
     private final int guiTextureWidth;
     private final int guiTextureHeight;
 
-    public CustomTexturedButtonWidget(int x, int y, int width, int height, int u, int v, Identifier guiTexture, PressAction pressAction) {
-        this(x, y, width, height, u, v, height, guiTexture, 256, 256, pressAction);
-    }
-
-    public CustomTexturedButtonWidget(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier guiTexture, PressAction pressAction) {
-        this(x, y, width, height, u, v, hoveredVOffset, guiTexture, 256, 256, pressAction);
-    }
-
-    public CustomTexturedButtonWidget(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier guiTexture, int guiTextureWidth, int guiTextureHeight, PressAction pressAction) {
-        this(x, y, width, height, u, v, hoveredVOffset, guiTexture, guiTextureWidth, guiTextureHeight, pressAction, ScreenTexts.EMPTY);
-    }
+//    public CustomTexturedButtonWidget(int x, int y, int width, int height, int u, int v, Identifier guiTexture, PressAction pressAction) {
+//        this(x, y, width, height, u, v, height, guiTexture, 256, 256, pressAction);
+//    }
+//
+//    public CustomTexturedButtonWidget(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier guiTexture, PressAction pressAction) {
+//        this(x, y, width, height, u, v, hoveredVOffset, guiTexture, 256, 256, pressAction);
+//    }
+//
+//    public CustomTexturedButtonWidget(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier guiTexture, int guiTextureWidth, int guiTextureHeight, PressAction pressAction) {
+//        this(x, y, width, height, u, v, hoveredVOffset, guiTexture, guiTextureWidth, guiTextureHeight, pressAction, ScreenTexts.EMPTY);
+//    }
 
     public CustomTexturedButtonWidget(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier guiTexture, int guiTextureWidth, int guiTextureHeight, PressAction pressAction, Text text) {
         super(x, y, width, height, text, pressAction, DEFAULT_NARRATION_SUPPLIER);
@@ -47,7 +47,7 @@ public class CustomTexturedButtonWidget extends ButtonWidget {
         this.v = v;
     }
 
-    public void renderButton(DrawContext ctx, int mouseX, int mouseY, float delta) {
+    public void renderWidget(DrawContext ctx, int mouseX, int mouseY, float delta) {
         ctx.drawTexture(this.guiTexture, this.getX(), this.getY(), this.u, this.v, this.width, this.height, this.guiTextureWidth, this.guiTextureHeight);
     }
 }

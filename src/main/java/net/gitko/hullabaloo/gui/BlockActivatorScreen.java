@@ -280,10 +280,6 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
         renderBackground(ctx, mouseX, mouseY, delta);
         super.render(ctx, mouseX, mouseY, delta);
         drawMouseoverTooltip(ctx, mouseX, mouseY);
-
-        if (redstoneModeButton != null) {
-            redstoneModeButton.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".redstoneMode." + redstoneMode)));
-        }
     }
 
     @Override
@@ -380,6 +376,7 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
                     }
                 }
 
+                this.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".redstoneMode." + redstoneMode)));
                 updateRedstoneMode(redstoneMode, client);
             }
         };

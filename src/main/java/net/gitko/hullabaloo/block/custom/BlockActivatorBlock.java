@@ -1,5 +1,6 @@
 package net.gitko.hullabaloo.block.custom;
 
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.minecraft.block.Block;
@@ -33,6 +34,11 @@ public class BlockActivatorBlock extends BlockWithEntity {
                 .with(IntProperty.of("anim", 1, 4), 1)
                 .with(BooleanProperty.of("on"), false)
         );
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return null;
     }
 
     @Override

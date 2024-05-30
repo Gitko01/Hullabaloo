@@ -62,13 +62,6 @@ public class VacuumHopperScreen extends HandledScreen<VacuumHopperScreenHandler>
         renderBackground(ctx, mouseX, mouseY, delta);
         super.render(ctx, mouseX, mouseY, delta);
         drawMouseoverTooltip(ctx, mouseX, mouseY);
-
-        if (redstoneModeButton != null) {
-            redstoneModeButton.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".redstoneMode." + redstoneMode)));
-        }
-        if (pushModeButton != null) {
-            pushModeButton.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".pushMode." + pushMode)));
-        }
     }
 
     @Override
@@ -156,6 +149,7 @@ public class VacuumHopperScreen extends HandledScreen<VacuumHopperScreenHandler>
                     }
                 }
 
+                this.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".redstoneMode." + redstoneMode)));
                 updateRedstoneMode(redstoneMode, client);
             }
         };
@@ -180,6 +174,7 @@ public class VacuumHopperScreen extends HandledScreen<VacuumHopperScreenHandler>
                     }
                 }
 
+                this.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".pushMode." + pushMode)));
                 updatePushMode(pushMode, client);
             }
         };

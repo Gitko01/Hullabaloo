@@ -80,10 +80,6 @@ public class VacuumFilterScreen extends HandledScreen<VacuumFilterScreenHandler>
                 }
             }
         }
-
-        if (modeButton != null) {
-            modeButton.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".vacuum_filter.mode." + mode)));
-        }
     }
 
     @Override
@@ -162,6 +158,7 @@ public class VacuumFilterScreen extends HandledScreen<VacuumFilterScreenHandler>
                     }
                 }
 
+                this.setTooltip(Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".vacuum_filter.mode." + mode)));
                 updateMode(mode, client);
             }
         };

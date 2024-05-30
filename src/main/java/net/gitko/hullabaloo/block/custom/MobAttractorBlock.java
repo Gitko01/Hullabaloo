@@ -1,5 +1,6 @@
 package net.gitko.hullabaloo.block.custom;
 
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.minecraft.block.Block;
@@ -23,6 +24,11 @@ public class MobAttractorBlock extends BlockWithEntity {
     public MobAttractorBlock(Settings settings) {
         super(settings);
         setDefaultState(getDefaultState());
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return null;
     }
 
     @Override

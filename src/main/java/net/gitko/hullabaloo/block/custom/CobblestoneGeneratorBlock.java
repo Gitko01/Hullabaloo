@@ -1,5 +1,6 @@
 package net.gitko.hullabaloo.block.custom;
 
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.ModBlocks;
@@ -29,6 +30,11 @@ public class CobblestoneGeneratorBlock extends BlockWithEntity {
     public CobblestoneGeneratorBlock(Settings settings) {
         super(settings);
         setDefaultState(getDefaultState());
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return null;
     }
 
     @Override
