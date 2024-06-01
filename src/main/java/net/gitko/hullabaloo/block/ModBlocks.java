@@ -1,18 +1,17 @@
 package net.gitko.hullabaloo.block;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.*;
 import net.gitko.hullabaloo.item.ModItemGroup;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipType;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -21,8 +20,6 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -41,7 +38,7 @@ public class ModBlocks {
     public static BlockEntityType<MobAttractorBlockEntity> MOB_ATTRACTOR_BLOCK_ENTITY;
 
     // No tooltip
-    public static Block registerBlock(FabricBlockSettings blockSettings, String name, RegistryKey<ItemGroup> itemGroup) {
+    public static Block registerBlock(AbstractBlock.Settings blockSettings, String name, RegistryKey<ItemGroup> itemGroup) {
         Block newBlock = new Block(blockSettings);
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
@@ -53,7 +50,7 @@ public class ModBlocks {
 
     // No tooltip
     public static void registerBlockItem(Block block, Identifier blockId, RegistryKey<ItemGroup> itemGroup) {
-        BlockItem newBlockItem = new BlockItem(block, new FabricItemSettings());
+        BlockItem newBlockItem = new BlockItem(block, new Item.Settings());
 
         Registry.register(Registries.ITEM, blockId, newBlockItem);
         // add to item group
@@ -63,7 +60,7 @@ public class ModBlocks {
     }
 
     // With tooltip
-    public static Block registerBlock(FabricBlockSettings blockSettings, String name, RegistryKey<ItemGroup> itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
+    public static Block registerBlock(AbstractBlock.Settings blockSettings, String name, RegistryKey<ItemGroup> itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
         Block newBlock = new Block(blockSettings);
         Identifier blockId = new Identifier(Hullabaloo.MOD_ID, name);
 
@@ -75,9 +72,9 @@ public class ModBlocks {
 
     // With tooltip
     public static void registerBlockItem(Block block, Identifier blockId, RegistryKey<ItemGroup> itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
-        BlockItem newBlockItem = new BlockItem(block, new FabricItemSettings()) {
+        BlockItem newBlockItem = new BlockItem(block, new Item.Settings()) {
             @Override
-            public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+            public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
                 if (holdDownShift) {
                     if (Screen.hasShiftDown()) {
                         int currentLine = 1;
@@ -130,7 +127,7 @@ public class ModBlocks {
     public static void initBlocks() {
         // Blocks
         VACUUM_HOPPER = registerBlock(
-                new VacuumHopperBlock(FabricBlockSettings.create()
+                new VacuumHopperBlock(AbstractBlock.Settings.create()
                         .mapColor(MapColor.IRON_GRAY)
                         .sounds(BlockSoundGroup.METAL)
                         .strength(5f, 6f)
@@ -139,7 +136,7 @@ public class ModBlocks {
         );
 
         BLOCK_ACTIVATOR = registerBlock(
-                new BlockActivatorBlock(FabricBlockSettings.create()
+                new BlockActivatorBlock(AbstractBlock.Settings.create()
                         .mapColor(MapColor.IRON_GRAY)
                         .sounds(BlockSoundGroup.METAL)
                         .strength(5f, 6f)
@@ -148,7 +145,7 @@ public class ModBlocks {
         );
 
         COBBLESTONE_GENERATOR = registerBlock(
-                new CobblestoneGeneratorBlock(FabricBlockSettings.create()
+                new CobblestoneGeneratorBlock(AbstractBlock.Settings.create()
                         .mapColor(MapColor.IRON_GRAY)
                         .sounds(BlockSoundGroup.METAL)
                         .strength(5f, 6f)
@@ -157,7 +154,7 @@ public class ModBlocks {
         );
 
         MOB_ATTRACTOR = registerBlock(
-                new MobAttractorBlock(FabricBlockSettings.create()
+                new MobAttractorBlock(AbstractBlock.Settings.create()
                         .mapColor(MapColor.IRON_GRAY)
                         .sounds(BlockSoundGroup.METAL)
                         .strength(5f, 6f)
@@ -166,29 +163,30 @@ public class ModBlocks {
                 "mob_attractor", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".mob_attractor", 4, true
         );
 
+
         // Block entities
         VACUUM_HOPPER_BLOCK_ENTITY = Registry.register(
                 Registries.BLOCK_ENTITY_TYPE,
                 new Identifier(Hullabaloo.MOD_ID, "vacuum_hopper_block_entity"),
-                FabricBlockEntityTypeBuilder.create(VacuumHopperBlockEntity::new, VACUUM_HOPPER).build()
+                BlockEntityType.Builder.create(VacuumHopperBlockEntity::new, VACUUM_HOPPER).build()
         );
 
         BLOCK_ACTIVATOR_BLOCK_ENTITY = Registry.register(
                 Registries.BLOCK_ENTITY_TYPE,
                 new Identifier(Hullabaloo.MOD_ID, "block_activator_block_entity"),
-                FabricBlockEntityTypeBuilder.create(BlockActivatorBlockEntity::new, BLOCK_ACTIVATOR).build()
+                BlockEntityType.Builder.create(BlockActivatorBlockEntity::new, BLOCK_ACTIVATOR).build()
         );
 
         COBBLESTONE_GENERATOR_BLOCK_ENTITY = Registry.register(
                 Registries.BLOCK_ENTITY_TYPE,
                 new Identifier(Hullabaloo.MOD_ID, "cobblestone_generator_block_entity"),
-                FabricBlockEntityTypeBuilder.create(CobblestoneGeneratorBlockEntity::new, COBBLESTONE_GENERATOR).build()
+                BlockEntityType.Builder.create(CobblestoneGeneratorBlockEntity::new, COBBLESTONE_GENERATOR).build()
         );
 
         MOB_ATTRACTOR_BLOCK_ENTITY = Registry.register(
                 Registries.BLOCK_ENTITY_TYPE,
                 new Identifier(Hullabaloo.MOD_ID, "mob_attractor_block_entity"),
-                FabricBlockEntityTypeBuilder.create(MobAttractorBlockEntity::new, MOB_ATTRACTOR).build()
+                BlockEntityType.Builder.create(MobAttractorBlockEntity::new, MOB_ATTRACTOR).build()
         );
     }
 }

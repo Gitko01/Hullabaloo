@@ -4,22 +4,18 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.gui.widget.CustomTexturedButtonWidget;
-import net.gitko.hullabaloo.item.custom.VacuumFilterItem;
+import net.gitko.hullabaloo.network.packet.UpdateVacuumFilterItemsPacket;
+import net.gitko.hullabaloo.network.packet.UpdateVacuumFilterModePacket;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -177,20 +173,13 @@ public class VacuumFilterScreen extends HandledScreen<VacuumFilterScreenHandler>
 
     private void updateItemsToFilter(Hashtable<Integer, ItemStack> itemsToFilter, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-
-            VacuumFilterItem.createItemsToFilterBuf(itemsToFilter, buf);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_vacuum_filter_items_packet"), buf);
+            ClientPlayNetworking.send(new UpdateVacuumFilterItemsPacket(itemsToFilter));
         });
     }
 
     private void updateMode(int newMode, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(newMode);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_vacuum_filter_mode_packet"), buf);
+            ClientPlayNetworking.send(new UpdateVacuumFilterModePacket(newMode));
         });
     }
 

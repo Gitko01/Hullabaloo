@@ -1,7 +1,6 @@
 package net.gitko.hullabaloo.client;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.client.renderer.CobblestoneGeneratorBlockEntityRenderer;
@@ -9,6 +8,7 @@ import net.gitko.hullabaloo.client.renderer.VacuumHopperBlockEntityRenderer;
 import net.gitko.hullabaloo.gui.*;
 import net.gitko.hullabaloo.network.packet.*;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 
 public class HullabalooClient implements ClientModInitializer {
     @Override
@@ -19,13 +19,12 @@ public class HullabalooClient implements ClientModInitializer {
         HandledScreens.register(Hullabaloo.COBBLESTONE_GENERATOR_SCREEN_HANDLER, CobblestoneGeneratorScreen::new);
         HandledScreens.register(Hullabaloo.MOB_ATTRACTOR_SCREEN_HANDLER, MobAttractorScreen::new);
 
-        BlockEntityRendererRegistry.register(ModBlocks.VACUUM_HOPPER_BLOCK_ENTITY, VacuumHopperBlockEntityRenderer::new);
-        BlockEntityRendererRegistry.register(ModBlocks.COBBLESTONE_GENERATOR_BLOCK_ENTITY, CobblestoneGeneratorBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlocks.VACUUM_HOPPER_BLOCK_ENTITY, VacuumHopperBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlocks.COBBLESTONE_GENERATOR_BLOCK_ENTITY, CobblestoneGeneratorBlockEntityRenderer::new);
 
         UpdateVacuumHopperRedstoneModePacket.register();
         UpdateVacuumHopperPushModePacket.register();
         UpdateVacuumHopperReachPacket.register();
-        UpdateVacuumHopperIOPacket.register();
         UpdateVacuumFilterItemsPacket.register();
         UpdateVacuumFilterModePacket.register();
         UpdateBlockActivatorClickModePacket.register();

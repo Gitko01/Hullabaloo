@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.CobblestoneGeneratorScreenHandler;
 import net.gitko.hullabaloo.item.ModItems;
+import net.gitko.hullabaloo.network.payload.CobblestoneGeneratorData;
 import net.gitko.hullabaloo.util.ImplementedInventory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -26,6 +27,7 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -40,7 +42,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 
-public class CobblestoneGeneratorBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory, SidedInventory {
+public class CobblestoneGeneratorBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory<CobblestoneGeneratorData>, SidedInventory {
     public static final int UPGRADE_SLOT_INDEX = 18;
 
     public int genSpeed = 0;
@@ -285,11 +287,9 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Impl
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+    public CobblestoneGeneratorData getScreenOpeningData(ServerPlayerEntity player) {
         // used in ScreenHandler
-        buf.writeBlockPos(pos);
-        buf.writeInt(redstoneMode);
-        buf.writeInt(pushMode);
+        return new CobblestoneGeneratorData(this.getPos(), this.getRedstoneMode(), this.getPushMode());
     }
 
     @Override
@@ -303,23 +303,23 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Impl
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
 
-        Inventories.readNbt(nbt, items);
+        Inventories.readNbt(nbt, items, registryLookup);
         this.redstoneMode = nbt.getInt("redstoneMode");
         this.pushMode = nbt.getInt("pushMode");
         this.outputs = nbt.getIntArray("outputs");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, items);
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        Inventories.writeNbt(nbt, items, registryLookup);
         nbt.putInt("redstoneMode", this.redstoneMode);
         nbt.putInt("pushMode", this.pushMode);
         nbt.putIntArray("outputs", this.outputs);
 
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
 
     @Nullable
@@ -329,8 +329,8 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Impl
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
     }
 
     public void sync() {
@@ -462,7 +462,7 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Impl
         } else if (first.getCount() > first.getMaxCount()) {
             return false;
         } else {
-            return ItemStack.canCombine(first, second);
+            return ItemStack.areItemsAndComponentsEqual(first, second);
         }
     }
 

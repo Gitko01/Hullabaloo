@@ -6,8 +6,7 @@
 	"description": "A random collection of things I thought would be nice to have in Minecraft",
 	"authors": [
 		"Gitko",
-		"noah1510 (GitHub contributor)",
-		"TheBlackEntity (GitHub contributor)"
+		"noah1510 (GitHub contributor)"
 	],
 	"contact": {
 		"homepage": "https://gitko01.github.io/",
@@ -29,8 +28,8 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.14.23",
-		"minecraft": "~1.20.4",
-		"java": ">=17",
+		"minecraft": "~1.20.6",
+		"java": ">=21",
 		"fabric-api": "*"
 	},
 	"suggests": {}

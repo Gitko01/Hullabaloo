@@ -4,10 +4,15 @@ import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.BlockActivatorScreenHandler;
+import net.gitko.hullabaloo.network.payload.BlockActivatorData;
 import net.gitko.hullabaloo.util.ImplementedInventory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -17,16 +22,14 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.IntProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
@@ -36,6 +39,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
@@ -44,7 +48,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BlockActivatorBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory {
+public class BlockActivatorBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory<BlockActivatorData> {
     public BlockActivatorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.BLOCK_ACTIVATOR_BLOCK_ENTITY, pos, state);
     }
@@ -140,13 +144,15 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
+    public BlockActivatorData getScreenOpeningData(ServerPlayerEntity player) {
         // used in BlockActivatorScreenHandler
-        packetByteBuf.writeBlockPos(pos);
-        packetByteBuf.writeInt(mode);
-        packetByteBuf.writeBoolean(roundRobin);
-        packetByteBuf.writeInt(tickInterval);
-        packetByteBuf.writeInt(redstoneMode);
+        return new BlockActivatorData(
+            this.getPos(),
+            this.mode,
+            this.roundRobin,
+            this.getTickInterval(),
+            this.getRedstoneMode()
+        );
     }
 
     private FakePlayer fakeServerPlayer = null;
@@ -214,7 +220,7 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
                 BlockState blockState = world.getBlockState(posToHit);
                 Float blockHardness = blockState.getHardness(world, posToHit);
 
-                if (!breakable(blockState, blockHardness)) {
+                if (!breakable(blockState, blockHardness, world, posToHit)) {
                     be.setDestroyTickCount(0);
                     world.setBlockBreakingInfo(be.fakeServerPlayer.getId(), posToHit, -1);
                 }
@@ -281,10 +287,10 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
                     // right click
 
                     // Animation (slowly open)
-                    if (world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) <= 1) {
-                        world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), 4));
+                    if (world.getBlockState(pos).get(BlockActivatorBlock.ANIM) <= 1) {
+                        world.setBlockState(pos, state.with(BlockActivatorBlock.ANIM, 4));
                     } else {
-                        world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) - 1));
+                        world.setBlockState(pos, state.with(BlockActivatorBlock.ANIM, world.getBlockState(pos).get(BlockActivatorBlock.ANIM) - 1));
                     }
 
                     DamageSource dmgSource = world.getDamageSources().playerAttack(be.fakeServerPlayer);
@@ -307,10 +313,10 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
                     // left click
 
                     // Animation (slowly close)
-                    if (world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) >= 4) {
-                        world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), 1));
+                    if (world.getBlockState(pos).get(BlockActivatorBlock.ANIM) >= 4) {
+                        world.setBlockState(pos, state.with(BlockActivatorBlock.ANIM, 1));
                     } else {
-                        world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) + 1));
+                        world.setBlockState(pos, state.with(BlockActivatorBlock.ANIM, world.getBlockState(pos).get(BlockActivatorBlock.ANIM) + 1));
                     }
 
                     DamageSource dmgSource = world.getDamageSources().playerAttack(be.fakeServerPlayer);
@@ -387,12 +393,12 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
             }
 
             if (be.energyStorage.amount < be.energyDecreasePerUse) {
-                if (world.getBlockState(pos).get(BooleanProperty.of("on"))) {
-                    world.setBlockState(pos, state.with(BooleanProperty.of("on"), false));
+                if (world.getBlockState(pos).get(BlockActivatorBlock.ON)) {
+                    world.setBlockState(pos, state.with(BlockActivatorBlock.ON, false));
                 }
             } else {
-                if (!world.getBlockState(pos).get(BooleanProperty.of("on"))) {
-                    world.setBlockState(pos, state.with(BooleanProperty.of("on"), true));
+                if (!world.getBlockState(pos).get(BlockActivatorBlock.ON)) {
+                    world.setBlockState(pos, state.with(BlockActivatorBlock.ON, true));
                 }
             }
         }
@@ -403,7 +409,7 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
         BlockState blockState = world.getBlockState(posToHit);
         Float blockHardness = blockState.getHardness(world, posToHit);
 
-        if (!breakable(blockState, blockHardness)) {
+        if (!breakable(blockState, blockHardness, world, posToHit)) {
             be.setDestroyTickCount(0);
             world.setBlockBreakingInfo(be.fakeServerPlayer.getId(), posToHit, -1);
 
@@ -515,8 +521,7 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
                     if (itemsBeingUsedToBreakBlocks.get(item).equals(posToHit)) {
                         if (!item.equals(bestItem)) {
                             if (item.isDamageable()) {
-                                item.damage(1, be.fakeServerPlayer, fakeServerPlayer1 -> {
-                                });
+                                item.damage(1, be.fakeServerPlayer, EquipmentSlot.MAINHAND);
                             }
                         }
                     }
@@ -568,8 +573,8 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
         }
     }
 
-    public static boolean breakable(BlockState blockState, Float blockHardness) {
-        return !blockState.isLiquid() && blockState.getBlock() != Blocks.AIR && blockHardness != -1f;
+    public static boolean breakable(BlockState blockState, Float blockHardness, BlockView world, BlockPos pos) {
+        return blockState.isSolidBlock(world, pos) && blockState.getBlock() != Blocks.AIR && blockHardness != -1f;
     }
 
     public int getDestroyTickCount() {
@@ -617,9 +622,9 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        Inventories.readNbt(nbt, items);
+    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
+        Inventories.readNbt(nbt, items, registryLookup);
         this.mode = nbt.getInt("mode");
         this.roundRobin = nbt.getBoolean("roundRobin");
         this.energyStorage.amount = nbt.getLong("energyAmount");
@@ -628,14 +633,14 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, items);
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        Inventories.writeNbt(nbt, items, registryLookup);
         nbt.putInt("mode", this.mode);
         nbt.putBoolean("roundRobin", this.roundRobin);
         nbt.putLong("energyAmount", this.energyStorage.amount);
         nbt.putInt("redstoneMode", this.redstoneMode);
         nbt.putInt("tickInterval", this.tickInterval);
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
 
     @Override
@@ -644,8 +649,8 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
     }
 
     public void sync() {

@@ -3,10 +3,8 @@ package net.gitko.hullabaloo.block.custom;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.block.ModBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
+import net.gitko.hullabaloo.network.payload.BlockActivatorData;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -15,6 +13,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
@@ -27,25 +26,31 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockActivatorBlock extends BlockWithEntity {
+    public static final MapCodec<BlockActivatorBlock> CODEC = createCodec(BlockActivatorBlock::new);
+
+    public static final DirectionProperty FACING = FacingBlock.FACING;
+    public static final IntProperty ANIM = IntProperty.of("anim", 1, 4);
+    public static final BooleanProperty ON = BooleanProperty.of("on");
+
     public BlockActivatorBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState()
-                .with(Properties.FACING, Direction.NORTH)
-                .with(IntProperty.of("anim", 1, 4), 1)
-                .with(BooleanProperty.of("on"), false)
+        setDefaultState(this.getStateManager().getDefaultState()
+                .with(FACING, Direction.NORTH)
+                .with(ANIM, 1)
+                .with(ON, false)
         );
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
+    protected MapCodec<BlockActivatorBlock> getCodec() {
+        return CODEC;
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.FACING);
-        builder.add(IntProperty.of("anim", 1, 4));
-        builder.add(BooleanProperty.of("on"));
+        builder.add(FACING);
+        builder.add(ANIM);
+        builder.add(ON);
     }
 
     @Nullable
@@ -66,7 +71,7 @@ public class BlockActivatorBlock extends BlockWithEntity {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (!world.isClient) {
             // This will call the createScreenHandlerFactory method from BlockWithEntity, which will return our blockEntity casted to
             // a namedScreenHandlerFactory. If your block class does not extend BlockWithEntity, it needs to implement createScreenHandlerFactory.
@@ -106,10 +111,12 @@ public class BlockActivatorBlock extends BlockWithEntity {
     }
 
     public static Direction getFacing(BlockState state) {
-        return state.get(Properties.FACING);
+        return state.get(FACING);
     }
 
-    public static Boolean getOn(BlockState state) { return state.get(BooleanProperty.of("on")); }
+    public static Boolean getOn(BlockState state) { return state.get(ON); }
+
+    public static int getAnim(BlockState state) { return state.get(ANIM); }
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {

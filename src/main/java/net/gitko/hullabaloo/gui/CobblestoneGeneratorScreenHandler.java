@@ -3,6 +3,7 @@ package net.gitko.hullabaloo.gui;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.CobblestoneGeneratorBlockEntity;
 import net.gitko.hullabaloo.item.ModItems;
+import net.gitko.hullabaloo.network.payload.CobblestoneGeneratorData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -22,11 +23,11 @@ public class CobblestoneGeneratorScreenHandler extends ScreenHandler {
     // This constructor gets called on the client when the server wants it to open the screenHandler,
     // The client will call the other constructor with an empty Inventory and the screenHandler will automatically
     // sync this empty inventory with the inventory on the server.
-    public CobblestoneGeneratorScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf packetByteBuf) {
+    public CobblestoneGeneratorScreenHandler(int syncId, PlayerInventory playerInventory, CobblestoneGeneratorData payload) {
         this(syncId, playerInventory, new SimpleInventory(CobblestoneGeneratorBlockEntity.INV_SIZE));
-        this.pos = packetByteBuf.readBlockPos();
-        this.redstoneMode = packetByteBuf.readInt();
-        this.pushMode = packetByteBuf.readInt();
+        this.pos = payload.pos();
+        this.redstoneMode = payload.redstoneMode();
+        this.pushMode = payload.pushMode();
     }
 
     // This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container

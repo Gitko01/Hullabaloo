@@ -8,6 +8,9 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.VacuumHopperBlockEntity;
 import net.gitko.hullabaloo.gui.widget.CustomTexturedButtonWidget;
+import net.gitko.hullabaloo.network.packet.UpdateVacuumHopperPushModePacket;
+import net.gitko.hullabaloo.network.packet.UpdateVacuumHopperReachPacket;
+import net.gitko.hullabaloo.network.packet.UpdateVacuumHopperRedstoneModePacket;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -201,31 +204,19 @@ public class VacuumHopperScreen extends HandledScreen<VacuumHopperScreenHandler>
 
     private void updateRange(int newRange, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(newRange);
-            buf.writeBlockPos(this.blockPos);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_vacuum_hopper_reach_packet"), buf);
+            ClientPlayNetworking.send(new UpdateVacuumHopperReachPacket(newRange, this.blockPos));
         });
     }
 
     private void updateRedstoneMode(int newRedstoneMode, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(newRedstoneMode);
-            buf.writeBlockPos(this.blockPos);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_vacuum_hopper_redstone_mode_packet"), buf);
+            ClientPlayNetworking.send(new UpdateVacuumHopperRedstoneModePacket(newRedstoneMode, this.blockPos));
         });
     }
 
     private void updatePushMode(int newPushMode, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(newPushMode);
-            buf.writeBlockPos(this.blockPos);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_vacuum_hopper_push_mode_packet"), buf);
+            ClientPlayNetworking.send(new UpdateVacuumHopperPushModePacket(newPushMode, this.blockPos));
         });
     }
 

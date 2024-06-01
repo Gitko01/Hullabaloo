@@ -23,7 +23,7 @@
     }
   },
   "result": {
-    "item": "hullabaloo:amethyst_cobblestone_generator_upgrade",
+    "id": "hullabaloo:amethyst_cobblestone_generator_upgrade",
     "count": 1
   }
 }

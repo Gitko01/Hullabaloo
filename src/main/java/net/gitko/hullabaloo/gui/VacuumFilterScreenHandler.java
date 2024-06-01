@@ -1,13 +1,12 @@
 package net.gitko.hullabaloo.gui;
 
 import net.gitko.hullabaloo.Hullabaloo;
-import net.gitko.hullabaloo.item.custom.VacuumFilterItem;
+import net.gitko.hullabaloo.network.payload.VacuumFilterData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
@@ -21,11 +20,11 @@ public class VacuumFilterScreenHandler extends ScreenHandler {
     //This constructor gets called on the client when the server wants it to open the screenHandler,
     //The client will call the other constructor with an empty Inventory and the screenHandler will automatically
     //sync this empty inventory with the inventory on the server.
-    public VacuumFilterScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf packetByteBuf) {
+    public VacuumFilterScreenHandler(int syncId, PlayerInventory playerInventory, VacuumFilterData payload) {
         this(syncId, playerInventory, new SimpleInventory(24));
 
-        this.mode = packetByteBuf.readInt();
-        this.itemsToFilter = VacuumFilterItem.readItemsToFilterBuf(packetByteBuf);
+        this.mode = payload.mode();
+        this.itemsToFilter = payload.itemsToFilter();
     }
 
     //This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container
@@ -71,8 +70,6 @@ public class VacuumFilterScreenHandler extends ScreenHandler {
             this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 142));
         }
     }
-
-
 
     @Override
     public boolean canUse(PlayerEntity player) {

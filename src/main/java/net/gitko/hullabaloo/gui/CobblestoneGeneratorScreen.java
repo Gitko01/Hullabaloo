@@ -7,6 +7,8 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.gui.widget.CustomTexturedButtonWidget;
+import net.gitko.hullabaloo.network.packet.UpdateCobblestoneGeneratorPushModePacket;
+import net.gitko.hullabaloo.network.packet.UpdateCobblestoneGeneratorRedstoneModePacket;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -168,21 +170,13 @@ public class CobblestoneGeneratorScreen extends HandledScreen<CobblestoneGenerat
 
     private void updateRedstoneMode(int newRedstoneMode, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(newRedstoneMode);
-            buf.writeBlockPos(this.blockPos);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_cobblestone_generator_redstone_mode_packet"), buf);
+            ClientPlayNetworking.send(new UpdateCobblestoneGeneratorRedstoneModePacket(newRedstoneMode, this.blockPos));
         });
     }
 
     private void updatePushMode(int newPushMode, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(newPushMode);
-            buf.writeBlockPos(this.blockPos);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_cobblestone_generator_push_mode_packet"), buf);
+            ClientPlayNetworking.send(new UpdateCobblestoneGeneratorPushModePacket(newPushMode, this.blockPos));
         });
     }
 

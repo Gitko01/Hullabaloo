@@ -1,10 +1,10 @@
 package net.gitko.hullabaloo.gui;
 
 import net.gitko.hullabaloo.Hullabaloo;
+import net.gitko.hullabaloo.network.payload.MobAttractorData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -20,10 +20,10 @@ public class MobAttractorScreenHandler extends ScreenHandler {
     // This constructor gets called on the client when the server wants it to open the screenHandler,
     // The client will call the other constructor with an empty Inventory and the screenHandler will automatically
     // sync this empty inventory with the inventory on the server.
-    public MobAttractorScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf packetByteBuf) {
-        this(syncId, playerInventory, new ArrayPropertyDelegate(3));
-        this.pos = packetByteBuf.readBlockPos();
-        this.range = packetByteBuf.readVector3f();
+    public MobAttractorScreenHandler(int syncId, PlayerInventory playerInventory, MobAttractorData payload) {
+        this(syncId, playerInventory, new ArrayPropertyDelegate(2));
+        this.pos = payload.pos();
+        this.range = payload.range();
     }
 
     // This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container
@@ -76,11 +76,7 @@ public class MobAttractorScreenHandler extends ScreenHandler {
         return energyAmountPropertyDelegate.get(0);
     }
 
-    public int getDrainAmount(){
-        return energyAmountPropertyDelegate.get(1);
-    }
-
     public int getCooldown(){
-        return energyAmountPropertyDelegate.get(2);
+        return energyAmountPropertyDelegate.get(1);
     }
 }

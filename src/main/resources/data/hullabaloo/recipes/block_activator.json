@@ -23,7 +23,7 @@
     }
   },
   "result": {
-    "item": "hullabaloo:block_activator",
+    "id": "hullabaloo:block_activator",
     "count": 1
   }
 }

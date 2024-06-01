@@ -27,14 +27,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 
 public class CobblestoneGeneratorBlock extends BlockWithEntity {
+    public static final MapCodec<CobblestoneGeneratorBlock> CODEC = createCodec(CobblestoneGeneratorBlock::new);
+
     public CobblestoneGeneratorBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState());
+        setDefaultState(this.getDefaultState());
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
+    protected MapCodec<CobblestoneGeneratorBlock> getCodec() {
+        return CODEC;
     }
 
     @Override
@@ -60,7 +62,7 @@ public class CobblestoneGeneratorBlock extends BlockWithEntity {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (player.getInventory().getStack(player.getInventory().selectedSlot).getItem() != ModItems.SCREWDRIVER) {
             if (!world.isClient) {
                 // This will call the createScreenHandlerFactory method from BlockWithEntity, which will return our blockEntity casted to

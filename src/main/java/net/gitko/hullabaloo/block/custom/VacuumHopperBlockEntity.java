@@ -5,6 +5,7 @@ import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.VacuumHopperScreenHandler;
 import net.gitko.hullabaloo.item.ModItems;
 import net.gitko.hullabaloo.item.custom.VacuumFilterItem;
+import net.gitko.hullabaloo.network.payload.VacuumHopperData;
 import net.gitko.hullabaloo.util.ImplementedInventory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -22,14 +23,13 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.state.property.IntProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -43,7 +43,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 
-public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory, SidedInventory {
+public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory<VacuumHopperData>, SidedInventory {
 
     private final DefaultedList<ItemEntity> detectedList = DefaultedList.ofSize(0);
     private final Hashtable<ItemEntity, Long> detectedListTimes = new Hashtable<>();
@@ -126,10 +126,10 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
         int reach = be.getVacuumReach();
 
         // Animation
-        if (world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) <= 1) {
-            world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), 4));
+        if (world.getBlockState(pos).get(VacuumHopperBlock.ANIM) <= 1) {
+            world.setBlockState(pos, state.with(VacuumHopperBlock.ANIM, 4));
         } else {
-            world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) - 1));
+            world.setBlockState(pos, state.with(VacuumHopperBlock.ANIM, world.getBlockState(pos).get(VacuumHopperBlock.ANIM) - 1));
         }
 
         // Pull items towards vacuum hopper
@@ -415,12 +415,9 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+    public VacuumHopperData getScreenOpeningData(ServerPlayerEntity player) {
         // used in ScreenHandler
-        buf.writeBlockPos(pos);
-        buf.writeInt(redstoneMode);
-        buf.writeInt(pushMode);
-        buf.writeInt(vacuumReach);
+        return new VacuumHopperData(this.getPos(), this.getRedstoneMode(), this.getPushMode(), this.getVacuumReach());
     }
 
     @Override
@@ -434,10 +431,10 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
 
-        Inventories.readNbt(nbt, items);
+        Inventories.readNbt(nbt, items, registryLookup);
         this.inputs = nbt.getIntArray("inputs");
         this.outputs = nbt.getIntArray("outputs");
         this.vacuumReach = nbt.getInt("vacuumReach");
@@ -446,15 +443,15 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, items);
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        Inventories.writeNbt(nbt, items, registryLookup);
         nbt.putIntArray("inputs", this.inputs);
         nbt.putIntArray("outputs", this.outputs);
         nbt.putInt("vacuumReach", this.vacuumReach);
         nbt.putInt("redstoneMode", this.redstoneMode);
         nbt.putInt("pushMode", this.pushMode);
 
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
 
     @Nullable
@@ -464,8 +461,8 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
     }
 
     public void sync() {
@@ -625,7 +622,7 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
             }
         }
 
-        return (Inventory)inventory;
+        return inventory;
     }
 
     // From HopperBlockEntity
@@ -637,7 +634,7 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
         } else if (first.getCount() > first.getMaxCount()) {
             return false;
         } else {
-            return ItemStack.canCombine(first, second);
+            return ItemStack.areItemsAndComponentsEqual(first, second);
         }
     }
 

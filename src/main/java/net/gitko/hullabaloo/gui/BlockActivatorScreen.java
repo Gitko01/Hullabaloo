@@ -8,6 +8,10 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.BlockActivatorBlockEntity;
 import net.gitko.hullabaloo.gui.widget.CustomTexturedButtonWidget;
+import net.gitko.hullabaloo.network.packet.UpdateBlockActivatorClickModePacket;
+import net.gitko.hullabaloo.network.packet.UpdateBlockActivatorRedstoneModePacket;
+import net.gitko.hullabaloo.network.packet.UpdateBlockActivatorRoundRobinPacket;
+import net.gitko.hullabaloo.network.packet.UpdateBlockActivatorSpeedPacket;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -135,7 +139,7 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
             RoundRobinModes[] var1 = values();
             int var2 = var1.length;
 
-            for(int var3 = 0; var3 < var2; ++var3) {
+            for (int var3 = 0; var3 < var2; ++var3) {
                 RoundRobinModes mode = var1[var3];
                 if (mode.name.equals(name)) {
                     return mode;
@@ -404,43 +408,26 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
 
     private void updateSpeed(int speed, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(speed);
-            buf.writeBlockPos(this.blockPos);
-
             this.speed = speed;
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_block_activator_speed_packet"), buf);
+            ClientPlayNetworking.send(new UpdateBlockActivatorSpeedPacket(speed, this.blockPos));
         });
     }
 
     private void switchMode(Modes mode, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(mode.getId());
-            buf.writeBlockPos(this.blockPos);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_block_activator_click_mode_packet"), buf);
+            ClientPlayNetworking.send(new UpdateBlockActivatorClickModePacket(mode.getId(), this.blockPos));
         });
     }
 
     private void switchRoundRobin(RoundRobinModes mode, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeBoolean(mode.isOn());
-            buf.writeBlockPos(this.blockPos);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_block_activator_round_robin_packet"), buf);
+            ClientPlayNetworking.send(new UpdateBlockActivatorRoundRobinPacket(mode.isOn(), this.blockPos));
         });
     }
 
     private void updateRedstoneMode(int newRedstoneMode, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(newRedstoneMode);
-            buf.writeBlockPos(this.blockPos);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_block_activator_redstone_mode_packet"), buf);
+            ClientPlayNetworking.send(new UpdateBlockActivatorRedstoneModePacket(newRedstoneMode, this.blockPos));
         });
     }
 

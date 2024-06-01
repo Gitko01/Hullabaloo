@@ -23,7 +23,7 @@
     }
   },
   "result": {
-    "item": "hullabaloo:gold_cobblestone_generator_upgrade",
+    "id": "hullabaloo:gold_cobblestone_generator_upgrade",
     "count": 1
   }
 }

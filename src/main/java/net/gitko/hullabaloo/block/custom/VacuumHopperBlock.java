@@ -4,10 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.item.ModItems;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -15,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
@@ -25,21 +23,26 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class VacuumHopperBlock extends BlockWithEntity {
+    public static final MapCodec<VacuumHopperBlock> CODEC = createCodec(VacuumHopperBlock::new);
+
+    public static final IntProperty ANIM = IntProperty.of("anim", 1, 4);
+
     public VacuumHopperBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState()
-                .with(IntProperty.of("anim", 1, 4), 1)
+        setDefaultState(this.getStateManager().getDefaultState()
+                .with(ANIM, 1)
         );
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
-    }
+    protected MapCodec<VacuumHopperBlock> getCodec() {
+        return CODEC;
+    };
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(IntProperty.of("anim", 1, 4));
+        //builder.add(IntProperty.of("anim", 1, 4));
+        builder.add(ANIM);
     }
 
     @Nullable
@@ -61,7 +64,7 @@ public class VacuumHopperBlock extends BlockWithEntity {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (player.getInventory().getStack(player.getInventory().selectedSlot).getItem() != ModItems.SCREWDRIVER) {
             if (!world.isClient) {
                 // This will call the createScreenHandlerFactory method from BlockWithEntity, which will return our blockEntity casted to
@@ -267,5 +270,5 @@ public class VacuumHopperBlock extends BlockWithEntity {
         return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
     }
 
-    public static int getAnim(BlockState state) { return state.get(IntProperty.of("anim", 1, 4)); }
+    public static int getAnim(BlockState state) { return state.get(ANIM); }
 }

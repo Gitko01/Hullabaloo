@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.MobAttractorBlockEntity;
+import net.gitko.hullabaloo.network.packet.UpdateMobAttractorRangePacket;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -23,6 +24,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector3f;
 
+import java.text.DecimalFormat;
 import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
@@ -63,7 +65,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
 
         int energy = getEnergyAmount(screenHandler);
         int cooldown = getCooldown(screenHandler);
-        int drainRate = getDrainAmount(screenHandler);
+        int drainRate = MobAttractorBlockEntity.calculateEnergyConsumption(this.range);
 
         int energyPercentage = Math.round(((float) energy / (float) maxUnitFill) * 100F);
         int singleUseEnergyPercentage = Math.round(((float) energy / (float) drainRate) * 100F);
@@ -220,24 +222,17 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
 
     private void updateRange(float range, Vector3f axis, MinecraftClient client) {
         client.execute(() -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-
             if (axis.x == 1 && axis.y == 0 && axis.z == 0) {
                 this.range = new Vector3f(range, this.range.y(), this.range.z());
-                buf.writeVector3f(this.range);
             } else if (axis.x == 0 && axis.y == 1 && axis.z == 0) {
                 this.range = new Vector3f(this.range.x(), range, this.range.z());
-                buf.writeVector3f(this.range);
             } else if (axis.x == 0 && axis.y == 0 && axis.z == 1) {
                 this.range = new Vector3f(this.range.x(), this.range.y(), range);
-                buf.writeVector3f(this.range);
             } else {
-                Hullabaloo.LOGGER.error("[Hullabaloo] Error in updating the range for a Mob Attractor! If you are a Fabric mod dev, please check out the update range method in MobAttractorScreen.");
+                Hullabaloo.LOGGER.error("[Hullabaloo] Error in updating the range for a Mob Attractor!");
             }
 
-            buf.writeBlockPos(this.blockPos);
-
-            ClientPlayNetworking.send(new Identifier(Hullabaloo.MOD_ID, "update_mob_attractor_range_packet"), buf);
+            ClientPlayNetworking.send(new UpdateMobAttractorRangePacket(this.range, this.blockPos));
         });
     }
 
@@ -261,14 +256,6 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
     private int getEnergyAmount(ScreenHandler handler) {
         if (handler instanceof MobAttractorScreenHandler) {
             return ((MobAttractorScreenHandler) handler).getEnergyAmount();
-        } else {
-            return -1;
-        }
-    }
-
-    private int getDrainAmount(ScreenHandler handler) {
-        if (handler instanceof MobAttractorScreenHandler) {
-            return ((MobAttractorScreenHandler) handler).getDrainAmount();
         } else {
             return -1;
         }

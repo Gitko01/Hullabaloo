@@ -1,11 +1,10 @@
 package net.gitko.hullabaloo.item;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.item.custom.VacuumFilterItem;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -14,8 +13,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -32,7 +29,7 @@ public class ModItems {
 
 
     // basic item with no tooltip
-    public static Item registerItem(FabricItemSettings itemSettings, String name, RegistryKey<ItemGroup> itemGroup) {
+    public static Item registerItem(Item.Settings itemSettings, String name, RegistryKey<ItemGroup> itemGroup) {
         Item newItem = new Item(itemSettings);
 
         Registry.register(Registries.ITEM, new Identifier(Hullabaloo.MOD_ID, name), newItem);
@@ -45,10 +42,10 @@ public class ModItems {
     }
 
     // basic item with tooltip
-    public static Item registerItem(FabricItemSettings itemSettings, String name, RegistryKey<ItemGroup> itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
+    public static Item registerItem(Item.Settings itemSettings, String name, RegistryKey<ItemGroup> itemGroup, String tooltipKey, Integer tooltipLineCount, Boolean holdDownShift) {
         Item newItem = new Item(itemSettings) {
             @Override
-            public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+            public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
                 if (holdDownShift) {
                     if (Screen.hasShiftDown()) {
                         int currentLine = 1;
@@ -92,33 +89,33 @@ public class ModItems {
     }
 
     public static void initItems() {
-        SCREWDRIVER = registerItem(new FabricItemSettings().maxCount(1),
+        SCREWDRIVER = registerItem(new Item.Settings().maxCount(1),
                 "screwdriver", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".screwdriver", 2, true
         );
 
-        VACUUM_FILTER = registerItem(new VacuumFilterItem(new FabricItemSettings().maxCount(1)), "vacuum_filter", ModItemGroup.TAB);
+        VACUUM_FILTER = registerItem(new VacuumFilterItem(new Item.Settings().maxCount(1)), "vacuum_filter", ModItemGroup.TAB);
 
-        IRON_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new FabricItemSettings().maxCount(1),
+        IRON_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new Item.Settings().maxCount(1),
                 "iron_cobblestone_generator_upgrade", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".iron_cobblestone_generator_upgrade", 1, false
         );
 
-        GOLD_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new FabricItemSettings().maxCount(1),
+        GOLD_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new Item.Settings().maxCount(1),
                 "gold_cobblestone_generator_upgrade", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".gold_cobblestone_generator_upgrade", 1, false
         );
 
-        DIAMOND_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new FabricItemSettings().maxCount(1),
+        DIAMOND_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new Item.Settings().maxCount(1),
                 "diamond_cobblestone_generator_upgrade", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".diamond_cobblestone_generator_upgrade", 1, false
         );
 
-        AMETHYST_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new FabricItemSettings().maxCount(1),
+        AMETHYST_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new Item.Settings().maxCount(1),
                 "amethyst_cobblestone_generator_upgrade", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".amethyst_cobblestone_generator_upgrade", 1, false
         );
 
-        NETHERITE_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new FabricItemSettings().maxCount(1),
+        NETHERITE_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new Item.Settings().maxCount(1),
                 "netherite_cobblestone_generator_upgrade", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".netherite_cobblestone_generator_upgrade", 1, false
         );
 
-        ULTIMATE_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new FabricItemSettings().maxCount(1),
+        ULTIMATE_COBBLESTONE_GENERATOR_UPGRADE = registerItem(new Item.Settings().maxCount(1),
                 "ultimate_cobblestone_generator_upgrade", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".ultimate_cobblestone_generator_upgrade", 1, false
         );
     }

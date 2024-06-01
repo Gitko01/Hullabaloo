@@ -1,6 +1,7 @@
 package net.gitko.hullabaloo.gui;
 
 import net.gitko.hullabaloo.Hullabaloo;
+import net.gitko.hullabaloo.network.payload.BlockActivatorData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -26,13 +27,13 @@ public class BlockActivatorScreenHandler extends ScreenHandler {
     //This constructor gets called on the client when the server wants it to open the screenHandler,
     //The client will call the other constructor with an empty Inventory and the screenHandler will automatically
     //sync this empty inventory with the inventory on the server.
-    public BlockActivatorScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf packetByteBuf) {
+    public BlockActivatorScreenHandler(int syncId, PlayerInventory playerInventory, BlockActivatorData payload) {
         this(syncId, playerInventory, new SimpleInventory(9), new ArrayPropertyDelegate(3));
-        this.pos = packetByteBuf.readBlockPos();
-        this.mode = packetByteBuf.readInt();
-        this.roundRobin = packetByteBuf.readBoolean();
-        this.speed = packetByteBuf.readInt();
-        this.redstoneMode = packetByteBuf.readInt();
+        this.pos = payload.pos();
+        this.mode = payload.mode();
+        this.roundRobin = payload.roundRobin();
+        this.speed = payload.speed();
+        this.redstoneMode = payload.redstoneMode();
     }
 
     //This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container

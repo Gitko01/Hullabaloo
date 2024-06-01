@@ -26,7 +26,7 @@
     }
   },
   "result": {
-    "item": "hullabaloo:cobblestone_generator",
+    "id": "hullabaloo:cobblestone_generator",
     "count": 1
   }
 }
