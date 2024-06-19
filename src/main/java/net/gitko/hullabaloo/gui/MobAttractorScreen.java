@@ -4,19 +4,16 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.custom.MobAttractorBlockEntity;
-import net.gitko.hullabaloo.network.packet.UpdateMobAttractorRangePacket;
+import net.gitko.hullabaloo.network.packet.c2s.UpdateMobAttractorRangePacket;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -24,7 +21,6 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Vector3f;
 
-import java.text.DecimalFormat;
 import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
@@ -63,7 +59,8 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
         int xMargin = 77;
         int yMargin = 71;
 
-        int energy = getEnergyAmount(screenHandler);
+        requestEnergyAmount(screenHandler);
+        long energy = getSavedEnergyAmount(screenHandler);
         int cooldown = getCooldown(screenHandler);
         int drainRate = MobAttractorBlockEntity.calculateEnergyConsumption(this.range);
 
@@ -253,12 +250,15 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
         }
     }
 
-    private int getEnergyAmount(ScreenHandler handler) {
-        if (handler instanceof MobAttractorScreenHandler) {
-            return ((MobAttractorScreenHandler) handler).getEnergyAmount();
-        } else {
-            return -1;
-        }
+    // Send a packet to the server requesting energy amount information
+    // Once the server is ready, it will send a packet back to this player with the energy amount info and the screen will update
+    // theoretically, of course
+    private void requestEnergyAmount(MobAttractorScreenHandler screenHandler) {
+        screenHandler.requestEnergyAmount(this.blockPos);
+    }
+
+    private long getSavedEnergyAmount(MobAttractorScreenHandler screenHandler) {
+        return screenHandler.getSavedEnergyAmount();
     }
 
     private int getCooldown(ScreenHandler handler) {
@@ -268,5 +268,4 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
             return -1;
         }
     }
-
 }

@@ -1,4 +1,4 @@
-package net.gitko.hullabaloo.network.packet;
+package net.gitko.hullabaloo.network.packet.c2s;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.gitko.hullabaloo.Hullabaloo;

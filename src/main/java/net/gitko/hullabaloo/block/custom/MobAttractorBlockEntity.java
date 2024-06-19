@@ -1,9 +1,10 @@
 package net.gitko.hullabaloo.block.custom;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.MobAttractorScreenHandler;
+import net.gitko.hullabaloo.network.packet.s2c.DisplayMobAttractorEnergyAmountPacket;
 import net.gitko.hullabaloo.network.payload.MobAttractorData;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -47,25 +48,23 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
         }
     };
 
-    // Sync energy amount to the screen
-    private final PropertyDelegate energyAmountPropertyDelegate = new PropertyDelegate() {
+    // Sync cooldown to the screen
+    // note: not using property delegate for energy amount anymore because it seems as though values of property delegates are now limited to the size of a 16 bit signed integer,
+    // and since the energy storage has a maximum capacity greater than that of a 16 bit signed integer, custom packets have to be used instead
+    private final PropertyDelegate cooldownPropertyDelegate = new PropertyDelegate() {
         @Override
         public int get(int index) {
-            if (index == 0) {
-                return (int) energyStorage.getAmount();
-            } else {
-                return getCooldown();
-            }
+            return getCooldown();
         }
 
         @Override
-        public void set(int index, int value) {
-            energyStorage.amount = value;
-        }
+        public void set(int index, int value) {}
 
+        // make sure this is set correctly!
+        // it will not work if set incorrectly
         @Override
         public int size() {
-            return 2;
+            return 1;
         }
     };
 
@@ -153,7 +152,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new MobAttractorScreenHandler(syncId, inv, this.energyAmountPropertyDelegate);
+        return new MobAttractorScreenHandler(syncId, inv, this.cooldownPropertyDelegate);
     }
 
     public void setRange(Vector3f newRange) {
@@ -166,5 +165,10 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
 
     public static int calculateEnergyConsumption(Vector3f range) {
         return ((int) range.x() * (int) range.y() * (int) range.z());
+    }
+
+    public void sendEnergyAmountToClient(ServerPlayerEntity player) {
+        // send a packet to client containing the energy amount information
+        ServerPlayNetworking.send(player, new DisplayMobAttractorEnergyAmountPacket(this.energyStorage.getAmount()));
     }
 }

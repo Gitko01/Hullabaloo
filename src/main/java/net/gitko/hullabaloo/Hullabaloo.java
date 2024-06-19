@@ -7,7 +7,8 @@ import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.*;
 import net.gitko.hullabaloo.item.ModItemGroup;
 import net.gitko.hullabaloo.item.ModItems;
-import net.gitko.hullabaloo.network.packet.*;
+import net.gitko.hullabaloo.network.packet.c2s.*;
+import net.gitko.hullabaloo.network.packet.s2c.DisplayMobAttractorEnergyAmountPacket;
 import net.gitko.hullabaloo.network.payload.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -16,8 +17,6 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.reborn.energy.api.EnergyStorage;
-
-import java.text.DecimalFormat;
 
 public class Hullabaloo implements ModInitializer {
 
@@ -51,6 +50,7 @@ public class Hullabaloo implements ModInitializer {
     }
 
     private void initPacketPayloads() {
+        // C2S
         PayloadTypeRegistry.playC2S().register(UpdateBlockActivatorClickModePacket.ID, UpdateBlockActivatorClickModePacket.CODEC);
         PayloadTypeRegistry.playC2S().register(UpdateBlockActivatorRedstoneModePacket.ID, UpdateBlockActivatorRedstoneModePacket.CODEC);
         PayloadTypeRegistry.playC2S().register(UpdateBlockActivatorRoundRobinPacket.ID, UpdateBlockActivatorRoundRobinPacket.CODEC);
@@ -63,6 +63,10 @@ public class Hullabaloo implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(UpdateVacuumHopperPushModePacket.ID, UpdateVacuumHopperPushModePacket.CODEC);
         PayloadTypeRegistry.playC2S().register(UpdateVacuumHopperReachPacket.ID, UpdateVacuumHopperReachPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(UpdateVacuumHopperRedstoneModePacket.ID, UpdateVacuumHopperRedstoneModePacket.CODEC);
+        PayloadTypeRegistry.playC2S().register(GetMobAttractorEnergyAmountPacket.ID, GetMobAttractorEnergyAmountPacket.CODEC);
+
+        // S2C
+        PayloadTypeRegistry.playS2C().register(DisplayMobAttractorEnergyAmountPacket.ID, DisplayMobAttractorEnergyAmountPacket.CODEC);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package net.gitko.hullabaloo.gui;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.gitko.hullabaloo.Hullabaloo;
+import net.gitko.hullabaloo.network.packet.c2s.GetMobAttractorEnergyAmountPacket;
 import net.gitko.hullabaloo.network.payload.MobAttractorData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -15,20 +17,22 @@ import org.joml.Vector3f;
 public class MobAttractorScreenHandler extends ScreenHandler {
     private BlockPos pos;
     private Vector3f range;
-    PropertyDelegate energyAmountPropertyDelegate;
+    public long energyAmount;
+    private boolean awaitingEnergyAmount;
+    PropertyDelegate cooldownPropertyDelegate;
 
     // This constructor gets called on the client when the server wants it to open the screenHandler,
     // The client will call the other constructor with an empty Inventory and the screenHandler will automatically
     // sync this empty inventory with the inventory on the server.
     public MobAttractorScreenHandler(int syncId, PlayerInventory playerInventory, MobAttractorData payload) {
-        this(syncId, playerInventory, new ArrayPropertyDelegate(2));
+        this(syncId, playerInventory, new ArrayPropertyDelegate(1));
         this.pos = payload.pos();
         this.range = payload.range();
     }
 
     // This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container
     // and can therefore directly provide it as an argument. This inventory will then be synced to the client.
-    public MobAttractorScreenHandler(int syncId, PlayerInventory playerInventory, PropertyDelegate energyAmountPropertyDelegate) {
+    public MobAttractorScreenHandler(int syncId, PlayerInventory playerInventory, PropertyDelegate cooldownPropertyDelegate) {
         super(Hullabaloo.MOB_ATTRACTOR_SCREEN_HANDLER, syncId);
 
         // placeholder for server
@@ -36,8 +40,8 @@ public class MobAttractorScreenHandler extends ScreenHandler {
         range = new Vector3f();
 
         // energy amount and drain amount
-        this.energyAmountPropertyDelegate = energyAmountPropertyDelegate;
-        this.addProperties(energyAmountPropertyDelegate);
+        this.cooldownPropertyDelegate = cooldownPropertyDelegate;
+        this.addProperties(cooldownPropertyDelegate);
 
         int m;
         int l;
@@ -72,11 +76,23 @@ public class MobAttractorScreenHandler extends ScreenHandler {
         return this.range;
     }
 
-    public int getEnergyAmount(){
-        return energyAmountPropertyDelegate.get(0);
+    public int getCooldown() {
+        return cooldownPropertyDelegate.get(0);
     }
 
-    public int getCooldown(){
-        return energyAmountPropertyDelegate.get(1);
+    public long getSavedEnergyAmount() {
+        return this.energyAmount;
+    }
+
+    public void setSavedEnergyAmount(long newEnergyAmount) {
+        awaitingEnergyAmount = false;
+        this.energyAmount = newEnergyAmount;
+    }
+
+    public void requestEnergyAmount(BlockPos blockPos) {
+        if (!awaitingEnergyAmount) {
+            awaitingEnergyAmount = true;
+            ClientPlayNetworking.send(new GetMobAttractorEnergyAmountPacket(blockPos));
+        }
     }
 }

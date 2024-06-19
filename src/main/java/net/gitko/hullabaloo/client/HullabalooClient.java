@@ -6,7 +6,8 @@ import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.client.renderer.CobblestoneGeneratorBlockEntityRenderer;
 import net.gitko.hullabaloo.client.renderer.VacuumHopperBlockEntityRenderer;
 import net.gitko.hullabaloo.gui.*;
-import net.gitko.hullabaloo.network.packet.*;
+import net.gitko.hullabaloo.network.packet.c2s.*;
+import net.gitko.hullabaloo.network.packet.s2c.DisplayMobAttractorEnergyAmountPacket;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 
@@ -22,6 +23,7 @@ public class HullabalooClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(ModBlocks.VACUUM_HOPPER_BLOCK_ENTITY, VacuumHopperBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(ModBlocks.COBBLESTONE_GENERATOR_BLOCK_ENTITY, CobblestoneGeneratorBlockEntityRenderer::new);
 
+        // C2S
         UpdateVacuumHopperRedstoneModePacket.register();
         UpdateVacuumHopperPushModePacket.register();
         UpdateVacuumHopperReachPacket.register();
@@ -34,6 +36,10 @@ public class HullabalooClient implements ClientModInitializer {
         UpdateMobAttractorRangePacket.register();
         UpdateBlockActivatorSpeedPacket.register();
         UpdateBlockActivatorRedstoneModePacket.register();
+        GetMobAttractorEnergyAmountPacket.register();
+
+        // S2C
+        DisplayMobAttractorEnergyAmountPacket.register();
 
         Hullabaloo.LOGGER.info("[Hullabaloo] (client) Finished preparing the hullabaloo!");
     }

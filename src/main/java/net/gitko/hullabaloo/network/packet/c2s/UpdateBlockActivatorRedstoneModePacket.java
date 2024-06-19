@@ -1,4 +1,4 @@
-package net.gitko.hullabaloo.network.packet;
+package net.gitko.hullabaloo.network.packet.c2s;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.gitko.hullabaloo.Hullabaloo;
@@ -10,11 +10,11 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
-public record UpdateBlockActivatorClickModePacket(int modeId, BlockPos pos) implements CustomPayload {
-    public static final PacketCodec<RegistryByteBuf, UpdateBlockActivatorClickModePacket> CODEC = CustomPayload.codecOf(UpdateBlockActivatorClickModePacket::write, UpdateBlockActivatorClickModePacket::new);
-    public static final CustomPayload.Id<UpdateBlockActivatorClickModePacket> ID = CustomPayload.id(String.valueOf(new Identifier(Hullabaloo.MOD_ID, "update_block_activator_click_mode_packet")));
+public record UpdateBlockActivatorRedstoneModePacket(int modeId, BlockPos pos) implements CustomPayload {
+    public static final PacketCodec<RegistryByteBuf, UpdateBlockActivatorRedstoneModePacket> CODEC = CustomPayload.codecOf(UpdateBlockActivatorRedstoneModePacket::write, UpdateBlockActivatorRedstoneModePacket::new);
+    public static final CustomPayload.Id<UpdateBlockActivatorRedstoneModePacket> ID = CustomPayload.id(String.valueOf(new Identifier(Hullabaloo.MOD_ID, "update_block_activator_redstone_mode_packet")));
 
-    private UpdateBlockActivatorClickModePacket(RegistryByteBuf buf) {
+    private UpdateBlockActivatorRedstoneModePacket(RegistryByteBuf buf) {
         this(
             PacketCodecs.INTEGER.decode(buf),
             BlockPos.PACKET_CODEC.decode(buf)
@@ -38,7 +38,7 @@ public record UpdateBlockActivatorClickModePacket(int modeId, BlockPos pos) impl
                     BlockActivatorBlockEntity be = (BlockActivatorBlockEntity) context.player().getServerWorld().getBlockEntity(payload.pos());
                     assert be != null;
 
-                    be.setMode(payload.modeId());
+                    be.setRedstoneMode(payload.modeId());
                     be.markDirty();
                     be.sync();
                 }

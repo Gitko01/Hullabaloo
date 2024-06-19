@@ -1,4 +1,4 @@
-package net.gitko.hullabaloo.network.packet;
+package net.gitko.hullabaloo.network.packet.c2s;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.gitko.hullabaloo.Hullabaloo;
@@ -10,11 +10,11 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
-public record UpdateBlockActivatorSpeedPacket(int speed, BlockPos pos) implements CustomPayload {
-    public static final PacketCodec<RegistryByteBuf, UpdateBlockActivatorSpeedPacket> CODEC = CustomPayload.codecOf(UpdateBlockActivatorSpeedPacket::write, UpdateBlockActivatorSpeedPacket::new);
-    public static final CustomPayload.Id<UpdateBlockActivatorSpeedPacket> ID = CustomPayload.id(String.valueOf(new Identifier(Hullabaloo.MOD_ID, "update_block_activator_speed_packet")));
+public record UpdateBlockActivatorClickModePacket(int modeId, BlockPos pos) implements CustomPayload {
+    public static final PacketCodec<RegistryByteBuf, UpdateBlockActivatorClickModePacket> CODEC = CustomPayload.codecOf(UpdateBlockActivatorClickModePacket::write, UpdateBlockActivatorClickModePacket::new);
+    public static final CustomPayload.Id<UpdateBlockActivatorClickModePacket> ID = CustomPayload.id(String.valueOf(new Identifier(Hullabaloo.MOD_ID, "update_block_activator_click_mode_packet")));
 
-    private UpdateBlockActivatorSpeedPacket(RegistryByteBuf buf) {
+    private UpdateBlockActivatorClickModePacket(RegistryByteBuf buf) {
         this(
             PacketCodecs.INTEGER.decode(buf),
             BlockPos.PACKET_CODEC.decode(buf)
@@ -22,7 +22,7 @@ public record UpdateBlockActivatorSpeedPacket(int speed, BlockPos pos) implement
     }
 
     public void write(RegistryByteBuf buf) {
-        PacketCodecs.INTEGER.encode(buf, speed());
+        PacketCodecs.INTEGER.encode(buf, modeId());
         BlockPos.PACKET_CODEC.encode(buf, pos());
     }
 
@@ -38,7 +38,7 @@ public record UpdateBlockActivatorSpeedPacket(int speed, BlockPos pos) implement
                     BlockActivatorBlockEntity be = (BlockActivatorBlockEntity) context.player().getServerWorld().getBlockEntity(payload.pos());
                     assert be != null;
 
-                    be.setTickInterval(payload.speed());
+                    be.setMode(payload.modeId());
                     be.markDirty();
                     be.sync();
                 }

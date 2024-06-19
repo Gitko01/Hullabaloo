@@ -1,4 +1,4 @@
-package net.gitko.hullabaloo.network.packet;
+package net.gitko.hullabaloo.network.packet.c2s;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.gitko.hullabaloo.Hullabaloo;
@@ -10,11 +10,11 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
-public record UpdateCobblestoneGeneratorRedstoneModePacket(int modeId, BlockPos pos) implements CustomPayload {
-    public static final PacketCodec<RegistryByteBuf, UpdateCobblestoneGeneratorRedstoneModePacket> CODEC = CustomPayload.codecOf(UpdateCobblestoneGeneratorRedstoneModePacket::write, UpdateCobblestoneGeneratorRedstoneModePacket::new);
-    public static final CustomPayload.Id<UpdateCobblestoneGeneratorRedstoneModePacket> ID = CustomPayload.id(String.valueOf(new Identifier(Hullabaloo.MOD_ID, "update_cobblestone_generator_redstone_mode_packet")));
+public record UpdateCobblestoneGeneratorPushModePacket(int modeId, BlockPos pos) implements CustomPayload {
+    public static final PacketCodec<RegistryByteBuf, UpdateCobblestoneGeneratorPushModePacket> CODEC = CustomPayload.codecOf(UpdateCobblestoneGeneratorPushModePacket::write, UpdateCobblestoneGeneratorPushModePacket::new);
+    public static final CustomPayload.Id<UpdateCobblestoneGeneratorPushModePacket> ID = CustomPayload.id(String.valueOf(new Identifier(Hullabaloo.MOD_ID, "update_cobblestone_generator_push_mode_packet")));
 
-    private UpdateCobblestoneGeneratorRedstoneModePacket(RegistryByteBuf buf) {
+    private UpdateCobblestoneGeneratorPushModePacket(RegistryByteBuf buf) {
         this(
             PacketCodecs.INTEGER.decode(buf),
             BlockPos.PACKET_CODEC.decode(buf)
@@ -38,7 +38,7 @@ public record UpdateCobblestoneGeneratorRedstoneModePacket(int modeId, BlockPos 
                     CobblestoneGeneratorBlockEntity be = (CobblestoneGeneratorBlockEntity) context.player().getServerWorld().getBlockEntity(payload.pos());
                     assert be != null;
 
-                    be.setRedstoneMode(payload.modeId());
+                    be.setPushMode(payload.modeId());
                     be.markDirty();
                     be.sync();
                 }
