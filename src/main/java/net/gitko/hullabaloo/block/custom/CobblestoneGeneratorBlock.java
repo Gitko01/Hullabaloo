@@ -125,7 +125,6 @@ public class CobblestoneGeneratorBlock extends BlockWithEntity {
             } else if (outputs[indexNum] == trueNum) {
                 outputs[indexNum] = 0;
             }
-            Hullabaloo.LOGGER.info("New outputs: " + Arrays.toString(outputs));
 
             be.setOutputs(outputs);
             be.sync();

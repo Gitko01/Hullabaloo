@@ -6,6 +6,7 @@ import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.MobAttractorScreenHandler;
 import net.gitko.hullabaloo.network.packet.s2c.DisplayMobAttractorEnergyAmountPacket;
 import net.gitko.hullabaloo.network.payload.MobAttractorData;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EntityType;
@@ -37,6 +38,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
     public static final int SPEED = 200;
     private Vector3f range = new Vector3f(64, 64, 64);
     public static final int MAX_RANGE = 256;
+    public static final float ENERGY_MULTIPLIER = 0.25f;
 
     // Create energy storage
     public static final int MAX_ENERGY_CAPACITY = 20000000;
@@ -79,6 +81,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
         if (be.attractorCooldown >= SPEED && world.isReceivingRedstonePower(pos) && be.energyStorage.getAmount() >= calculateEnergyConsumption(be.range)) {
             be.attractorCooldown = 0;
             be.energyStorage.amount -= calculateEnergyConsumption(be.range);
+            be.markDirty();
 
             List<LivingEntity> entities = world.getEntitiesByClass(LivingEntity.class, Box.of(pos.toCenterPos(), be.range.x(), be.range.y(), be.range.z()), e -> (
                     e.getType() != EntityType.PLAYER &&
@@ -119,6 +122,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
         super.readNbt(nbt, registryLookup);
 
         this.range = new Vector3f(nbt.getFloat("rangeX"), nbt.getFloat("rangeY"), nbt.getFloat("rangeZ"));
+        this.energyStorage.amount = nbt.getLong("energyAmount");
     }
 
     @Override
@@ -126,6 +130,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
         nbt.putFloat("rangeX", this.range.x());
         nbt.putFloat("rangeY", this.range.y());
         nbt.putFloat("rangeZ", this.range.z());
+        nbt.putLong("energyAmount", this.energyStorage.amount);
 
         super.writeNbt(nbt, registryLookup);
     }
@@ -141,11 +146,15 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
         return createNbt(registryLookup);
     }
 
+    // only needs to be called whenever the client needs the data for rendering immediately (blocks such as signs and banners need to use a function like this whenever data is updated)
+    // just markDirty can be called for blocks such as chests and furnaces which only need the data when the GUI is opened
     public void sync() {
-        assert world != null;
-        if (!world.isClient()) {
+        assert this.getWorld() != null;
+        if (!this.getWorld().isClient()) {
             // updates comparators and marks dirty
             this.markDirty();
+            // let client know that the block has been updated
+            this.getWorld().updateListeners(this.getPos(), this.getCachedState(), this.getWorld().getBlockState(this.getPos()), Block.NOTIFY_LISTENERS);
         }
     }
 
@@ -164,7 +173,7 @@ public class MobAttractorBlockEntity extends BlockEntity implements ExtendedScre
     }
 
     public static int calculateEnergyConsumption(Vector3f range) {
-        return ((int) range.x() * (int) range.y() * (int) range.z());
+        return (int) (((int) range.x() * (int) range.y() * (int) range.z()) * ENERGY_MULTIPLIER);
     }
 
     public void sendEnergyAmountToClient(ServerPlayerEntity player) {

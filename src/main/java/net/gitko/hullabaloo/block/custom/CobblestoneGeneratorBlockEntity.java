@@ -1,6 +1,7 @@
 package net.gitko.hullabaloo.block.custom;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.gitko.hullabaloo.Hullabaloo;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.CobblestoneGeneratorScreenHandler;
 import net.gitko.hullabaloo.item.ModItems;
@@ -42,7 +43,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class CobblestoneGeneratorBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory<CobblestoneGeneratorData>, SidedInventory {
-    public static final int UPGRADE_SLOT_INDEX = 18;
+    public static final int UPGRADE_SLOT_INDEX = 0;
+    public boolean legacyUpgradeSlotFixed = true;
 
     public int genSpeed = 0;
     public int genItemCount = 1;
@@ -100,9 +102,20 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Impl
     public static void tick(World world, BlockPos pos, BlockState state, CobblestoneGeneratorBlockEntity be) {
         if (world.isClient()) return;
 
+        // Since the upgrade slot had its ID updated in v1.1.0, we need to "migrate" the slot and swap the items from the old slot to the new slot
+        if (!be.legacyUpgradeSlotFixed) {
+            be.legacyUpgradeSlotFixed = true;
+            ItemStack oldUpgradeSlot = be.getStack(18).copy();
+            ItemStack newUpgradeSlot = be.getStack(CobblestoneGeneratorBlockEntity.UPGRADE_SLOT_INDEX).copy();
+            be.setStack(CobblestoneGeneratorBlockEntity.UPGRADE_SLOT_INDEX, oldUpgradeSlot);
+            be.setStack(18, newUpgradeSlot);
+            be.markDirty();
+        }
+
         if (be.outputs.length < 6) {
             int[] defaults = {1,2,3,4,5,6};
             be.setOutputs(defaults);
+            be.sync();
         }
 
         // Check redstone mode
@@ -152,6 +165,7 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Impl
             itemStack.setCount(be.genItemCount);
 
             be.addStack(itemStack);
+            be.markDirty();
         } else {
             be.setCurrentGenCooldown(be.getCurrentGenCooldown() + 1);
         }
@@ -309,6 +323,9 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Impl
         this.redstoneMode = nbt.getInt("redstoneMode");
         this.pushMode = nbt.getInt("pushMode");
         this.outputs = nbt.getIntArray("outputs");
+        if (!nbt.contains("legacyUpgradeSlotFixed")) {
+            this.legacyUpgradeSlotFixed = false;
+        }
     }
 
     @Override
@@ -317,6 +334,7 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Impl
         nbt.putInt("redstoneMode", this.redstoneMode);
         nbt.putInt("pushMode", this.pushMode);
         nbt.putIntArray("outputs", this.outputs);
+        nbt.putBoolean("legacyUpgradeSlotFixed", this.legacyUpgradeSlotFixed);
 
         super.writeNbt(nbt, registryLookup);
     }
@@ -332,11 +350,15 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Impl
         return createNbt(registryLookup);
     }
 
+    // only needs to be called whenever the client needs the data for rendering immediately (blocks such as signs and banners need to use a function like this whenever data is updated)
+    // just markDirty can be called for blocks such as chests and furnaces which only need the data when the GUI is opened
     public void sync() {
         assert this.getWorld() != null;
         if (!this.getWorld().isClient()) {
             // updates comparators and marks dirty
             this.markDirty();
+            // let client know that the block has been updated
+            this.getWorld().updateListeners(this.getPos(), this.getCachedState(), this.getWorld().getBlockState(this.getPos()), Block.NOTIFY_LISTENERS);
         }
     }
 
