@@ -144,7 +144,7 @@ public class ModBlocks {
                         .sounds(BlockSoundGroup.METAL)
                         .strength(5f, 6f)
                         .requiresTool()),
-                "block_activator", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".block_activator", 3, true
+                "block_activator", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".block_activator", 4, true
         );
 
         COBBLESTONE_GENERATOR = registerBlock(
@@ -153,7 +153,7 @@ public class ModBlocks {
                         .sounds(BlockSoundGroup.METAL)
                         .strength(5f, 6f)
                         .requiresTool()),
-                "cobblestone_generator", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".cobblestone_generator", 2, true
+                "cobblestone_generator", ModItemGroup.TAB, "tooltip." + Hullabaloo.MOD_ID + ".cobblestone_generator", 3, true
         );
 
         MOB_ATTRACTOR = registerBlock(

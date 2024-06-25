@@ -169,6 +169,12 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
         speed = getSpeed(handler);
         redstoneMode = getRedstoneMode(handler);
         screenHandler = handler;
+
+        this.backgroundWidth = 176;
+        this.backgroundHeight = 184;
+        this.x = (this.width - this.backgroundWidth) / 2;
+        this.y = (this.height - this.backgroundHeight) / 2;
+        this.playerInventoryTitleY = this.backgroundHeight - 94;
     }
 
     @Override
@@ -178,16 +184,18 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
         RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
+        this.x = x;
+        this.y = y;
 
         ctx.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
 
         // progress bar
         int maxUnitFill = BlockActivatorBlockEntity.maxEnergyCapacity;
-        int pBLength = 50;
-        int pBHeight = 5;
+        int pBLength = 104;
+        int pBHeight = 8;
 
-        int xMargin = 117;
-        int yMargin = 74;
+        int xMargin = 63;
+        int yMargin = 89;
 
         int energy = getEnergyAmount(screenHandler);
         int drainRate = getDrainRate(screenHandler);
@@ -203,7 +211,7 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
             fillLength = pBLength;
         }
 
-        ctx.drawTexture(TEXTURE, x + xMargin, y + yMargin, 1, 167, fillLength, pBHeight);
+        ctx.drawTexture(TEXTURE, x + xMargin, y + yMargin, 1, 185, fillLength, pBHeight);
 
         // render a tooltip containing energy amount
         if (mouseX >= x + xMargin && mouseX <= (x + xMargin) + pBLength) {
@@ -211,7 +219,7 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
                 DefaultedList<Text> tooltip = DefaultedList.ofSize(0);
                 
                 if (Screen.hasShiftDown()) {
-                    tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", energy, maxUnitFill)));
+                    tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", Hullabaloo.DF.format(energy), Hullabaloo.DF.format(maxUnitFill))));
 
                     if (energyPercentage <= 10) {
                         tooltip.add(Text.of("§4" + energyPercentage + "% Charged§r"));
@@ -225,10 +233,10 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
 
                     tooltip.add(Text.of("§6Max Energy: 10,000 E§r"));
                     tooltip.add(Text.of("§6Max Input Rate: 5,000 E§r"));
-                    tooltip.add(Text.of("§6Drain Rate: -" + drainRate + " E/t§r"));
+                    tooltip.add(Text.of("§6Drain Rate: -" + Hullabaloo.DF.format(drainRate) + " E/t§r"));
                 } else {
                     // §number §r
-                    tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", energy, maxUnitFill)));
+                    tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", Hullabaloo.DF.format(energy), Hullabaloo.DF.format(maxUnitFill))));
 
                     if (energyPercentage <= 10) {
                         tooltip.add(Text.of("§4" + energyPercentage + "% Charged§r"));
@@ -245,15 +253,15 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
             }
         }
 
-        xMargin = 61;
+        xMargin = 5;
         yMargin = 60;
 
         // render a tooltip containing energy amount
-        if (mouseX >= x + xMargin && mouseX <= (x + xMargin) + 52) {
+        if (mouseX >= x + xMargin && mouseX <= (x + xMargin) + 108) {
             if (mouseY >= y + yMargin && mouseY <= (y + yMargin) + 21) {
                 DefaultedList<Text> tooltip = DefaultedList.ofSize(0);
 
-                tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", energy, maxUnitFill)));
+                tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", Hullabaloo.DF.format(energy), Hullabaloo.DF.format(maxUnitFill))));
 
                 if (energyPercentage <= 10) {
                     tooltip.add(Text.of("§4" + energyPercentage + "% Charged§r"));
@@ -266,8 +274,8 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
                 tooltip.add(Text.of(""));
 
                 tooltip.add(Text.of("§6Cooldown: " + speed + " ticks§r"));
-                tooltip.add(Text.of("§6Drain Rate: -" + drainRate + " E/t§r"));
-                tooltip.add(Text.of("§6Energy to Run Once: -" + singleUseEnergy + " E§r"));
+                tooltip.add(Text.of("§6Drain Rate: -" + Hullabaloo.DF.format(drainRate) + " E/t§r"));
+                tooltip.add(Text.of("§6Energy to Run Once: -" + Hullabaloo.DF.format(singleUseEnergy) + " E§r"));
 
                 ctx.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
             }
@@ -301,19 +309,19 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
 
         if (modeButton == null && mode != -1) {
             modeButton = this.addDrawableChild(createModeButtonWidget(
-                    0, x, y, 5, 16, 108, 20, "gui." + Hullabaloo.MOD_ID + ".block_activator.switchMode", client)
+                    0, x, y, 7, 19, 106, 20, "gui." + Hullabaloo.MOD_ID + ".block_activator.switchMode", client)
             );
         }
 
         if (roundRobinButton == null) {
             roundRobinButton = this.addDrawableChild(createRoundRobinButtonWidget(
-                    0, x, y, 5, 38, 108, 20, "gui." + Hullabaloo.MOD_ID + ".block_activator.switchRoundRobin", client)
+                    0, x, y, 7, 41, 106, 20, "gui." + Hullabaloo.MOD_ID + ".block_activator.switchRoundRobin", client)
             );
         }
 
         if (speedScrollbar == null && speed != -1) {
             speedScrollbar = this.addDrawableChild(createSpeedWidget(
-                    x, y, 61, 60, 52, 21, Text.translatable("gui." + Hullabaloo.MOD_ID + ".block_activator.speed"), speed, BlockActivatorBlockEntity.MAX_TICK_INTERVAL, client)
+                    x, y, 7, 63, 106, 21, Text.translatable("gui." + Hullabaloo.MOD_ID + ".block_activator.speed"), speed, BlockActivatorBlockEntity.MAX_TICK_INTERVAL, client)
             );
         }
 
@@ -332,7 +340,7 @@ public class BlockActivatorScreen extends HandledScreen<BlockActivatorScreenHand
             }
 
             redstoneModeButton = this.addDrawableChild(createRedstoneModeWidget(
-                    x, y, 6, 6, 8, 8, u, v, 0, TEXTURE, 256, 256, ButtonWidget::onPress, Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".redstoneMode." + redstoneMode)), Text.literal(""), client));
+                    x, y, 8, 8, 8, 8, u, v, 0, TEXTURE, 256, 256, ButtonWidget::onPress, Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".redstoneMode." + redstoneMode)), Text.literal(""), client));
         }
 
         if (mode == -1) {

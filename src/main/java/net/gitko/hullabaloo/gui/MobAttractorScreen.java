@@ -85,7 +85,7 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
                 DefaultedList<Text> tooltip = DefaultedList.ofSize(0);
 
                 if (Screen.hasShiftDown()) {
-                    tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", energy, maxUnitFill)));
+                    tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", Hullabaloo.DF.format(energy), Hullabaloo.DF.format(maxUnitFill))));
 
                     if (energyPercentage <= 10) {
                         tooltip.add(Text.of("§4" + energyPercentage + "% Charged§r"));
@@ -99,10 +99,10 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
 
                     tooltip.add(Text.of("§6Max Energy: 20,000,000 E§r"));
                     tooltip.add(Text.of("§6Max Input Rate: 20,000,000 E§r"));
-                    tooltip.add(Text.of("§6Drain Amount: -" + drainRate + " E§r"));
+                    tooltip.add(Text.of("§6Drain Amount: -" + Hullabaloo.DF.format(drainRate) + " E§r"));
                 } else {
                     // §number §r
-                    tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", energy, maxUnitFill)));
+                    tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", Hullabaloo.DF.format(energy), Hullabaloo.DF.format(maxUnitFill))));
 
                     if (energyPercentage <= 10) {
                         tooltip.add(Text.of("§4" + energyPercentage + "% Charged§r"));
@@ -127,8 +127,8 @@ public class MobAttractorScreen extends HandledScreen<MobAttractorScreenHandler>
             if (mouseY >= y + yMargin && mouseY <= y + yMargin + 12) {
                 DefaultedList<Text> tooltip = DefaultedList.ofSize(0);
 
-                tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", energy, drainRate)));
-                tooltip.add(Text.of("§6Amount per use: -" + drainRate + " E§r"));
+                tooltip.add(Text.of(String.format("§6%1$s / %2$s E§r", Hullabaloo.DF.format(energy), Hullabaloo.DF.format(drainRate))));
+                tooltip.add(Text.of("§6Amount per use: -" + Hullabaloo.DF.format(drainRate) + " E§r"));
 
                 if (singleUseEnergyPercentage <= 10) {
                     tooltip.add(Text.of("§4" + singleUseEnergyPercentage + "% Charged (single-use)§r"));
