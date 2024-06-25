@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.gitko.hullabaloo.block.ModBlocks;
 import net.gitko.hullabaloo.gui.BlockActivatorScreenHandler;
 import net.gitko.hullabaloo.util.ImplementedInventory;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
@@ -116,11 +117,11 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
 
     private int mode = 0;
 
-    private Integer id = 0;
+    private UUID uuid;
 
     private static final DefaultedList<BlockState> blocksBeingBroken = DefaultedList.ofSize(0);
     // Int in the hashtable below is the ID of the block entity
-    private static final DefaultedList<Hashtable<Integer, Double>> blocksBeingBrokenProgresses = DefaultedList.ofSize(0);
+    private static final DefaultedList<Hashtable<UUID, Double>> blocksBeingBrokenProgresses = DefaultedList.ofSize(0);
     private static final DefaultedList<BlockPos> blocksBeingBrokenPositions = DefaultedList.ofSize(0);
     private static final Hashtable<ItemStack, BlockPos> itemsBeingUsedToBreakBlocks = new Hashtable<>();
     private static final Hashtable<ItemStack, BlockPos> itemsBeingUsedToBreakBlocksBlockEntity = new Hashtable<>();
@@ -161,9 +162,6 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
         // REVISE ITEM DROPPING METHOD TO ENSURE NO DESPAWNS
         // CLICKING WITH A STACK OF BUCKETS USES EVERY BUCKET IT CAN (COULD BE FIXED, BUT MAY BE LEFT IN)
 
-        // Thanks to TheBlackEntity for the many contributions to this block!
-        // https://github.com/TheBlackEntity
-
         if (!world.isClient()) {
             if (be.tickInterval != 0) {
                 be.energyDecreasePerUse = (int) Math.round(Math.pow((float) BASE_ENERGY_USAGE / (float) be.tickInterval, INEFFICIENCY));
@@ -191,18 +189,13 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
 
             be.setTickCount(be.getTickCount() + 1);
 
+            // Create the fake player with a unique UUID
             if (be.fakeServerPlayer == null) {
-                int randomInt = Random.create().nextInt();
                 UUID randUUID = UUID.randomUUID();
-
-                // Player was slain by a block activator
                 be.fakeServerPlayer = createFakePlayerBuilder().create(
-                        world.getServer(), (ServerWorld) world, new GameProfile(randUUID, "a block activator")
+                        world.getServer(), (ServerWorld) world, new GameProfile(randUUID, "[Block Activator]")
                 );
-
-                be.fakeServerPlayer.setId(randomInt);
-                be.fakeServerPlayer.setUuid(UUID.randomUUID());
-                be.id = randomInt;
+                be.uuid = randUUID;
             }
 
             Direction facing = BlockActivatorBlock.getFacing(state);
@@ -387,6 +380,7 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
                 }
 
                 be.fakeServerPlayer.getInventory().clear();
+                be.markDirty();
             }
 
             if (be.energyStorage.amount < be.energyDecreasePerUse) {
@@ -466,13 +460,13 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
         // find destroy progress from other block activators
         if (blocksBeingBroken.contains(blockState)) {
             if (blocksBeingBrokenPositions.get(blocksBeingBroken.indexOf(blockState)).equals(posToHit)) {
-                Hashtable<Integer, Double> progressList = blocksBeingBrokenProgresses.get(blocksBeingBroken.indexOf(blockState));
+                Hashtable<UUID, Double> progressList = blocksBeingBrokenProgresses.get(blocksBeingBroken.indexOf(blockState));
 
-                if (!progressList.contains(be.id)) {
-                    progressList.put(be.id, destroyProgress);
+                if (!progressList.contains(be.uuid)) {
+                    progressList.put(be.uuid, destroyProgress);
                 } else {
-                    progressList.remove(be.id);
-                    progressList.put(be.id, destroyProgress);
+                    progressList.remove(be.uuid);
+                    progressList.put(be.uuid, destroyProgress);
                 }
 
                 // grab each destroy progress reported by each block activator, place it into one variable
@@ -651,10 +645,15 @@ public class BlockActivatorBlockEntity extends BlockEntity implements Implemente
         return createNbt();
     }
 
+    // only needs to be called whenever the client needs the data for rendering immediately (blocks such as signs and banners need to use a function like this whenever data is updated)
+    // just markDirty can be called for blocks such as chests and furnaces which only need the data when the GUI is opened
     public void sync() {
-        assert world != null;
-        if (!world.isClient()) {
-            world.markDirty(getPos());
+        assert this.getWorld() != null;
+        if (!this.getWorld().isClient()) {
+            // updates comparators and marks dirty
+            this.markDirty();
+            // let client know that the block has been updated
+            this.getWorld().updateListeners(this.getPos(), this.getCachedState(), this.getWorld().getBlockState(this.getPos()), Block.NOTIFY_LISTENERS);
         }
     }
 }

@@ -3,9 +3,10 @@
 	"id": "hullabaloo",
 	"version": "${version}",
 	"name": "Hullabaloo",
-	"description": "A random collection of things I thought would be nice to have in Minecraft",
+	"description": "A tech mod with a particular focus on automation and item management",
 	"authors": [
-		"Gitko"
+		"Gitko",
+		"Entity303 (GitHub contributor)"
 	],
 	"contact": {
 		"homepage": "https://gitko01.github.io/",

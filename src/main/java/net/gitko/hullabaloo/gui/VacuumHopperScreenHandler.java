@@ -51,23 +51,22 @@ public class VacuumHopperScreenHandler extends ScreenHandler {
         //This will not render the background of the slots however, this is the Screens job
         int m;
         int l;
+        // Vacuum filter slot
+        this.addSlot(new Slot(inventory, VacuumHopperBlockEntity.FILTER_SLOT_INDEX, 8, 20) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return stack.getItem() == ModItems.VACUUM_FILTER;
+            }
+        });
         //Our inventory
         for (m = 0; m < 2; ++m) {
             for (l = 0; l < 5; ++l) {
                 // for "textures/gui/container/dispenser.png"
                 //this.addSlot(new Slot(inventory, l + m * 3, 62 + l * 18, 17 + m * 18));
 
-                this.addSlot(new Slot(inventory, l + m * 5, 62 + l * 18, 20 + m * 18));
+                this.addSlot(new Slot(inventory, 1 + l + m * 5, 62 + l * 18, 20 + m * 18));
             }
         }
-        // Vacuum filter slot
-        this.addSlot(new Slot(inventory, VacuumHopperBlockEntity.FILTER_SLOT_INDEX, 27, 20) {
-            @Override
-            public boolean canInsert(ItemStack stack) {
-                return stack.getItem() == ModItems.VACUUM_FILTER;
-            }
-        });
-
         //The player inventory
         for (m = 0; m < 3; ++m) {
             for (l = 0; l < 9; ++l) {

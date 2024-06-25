@@ -67,18 +67,18 @@ public class BlockActivatorScreenHandler extends ScreenHandler {
                 //this.addSlot(new Slot(inventory, l + m * 3, 62 + l * 18, 17 + m * 18));
 
                 // for block activator screen texture
-                this.addSlot(new Slot(inventory, l + m * 3, 116 + l * 18, 17 + m * 18));
+                this.addSlot(new Slot(inventory, l + m * 3, 116 + l * 18, 20 + m * 18));
             }
         }
         //The player inventory
         for (m = 0; m < 3; ++m) {
             for (l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + m * 9 + 9, 8 + l * 18, 84 + m * 18));
+                this.addSlot(new Slot(playerInventory, l + m * 9 + 9, 8 + l * 18, 84 + 18 + m * 18));
             }
         }
         //The player Hotbar
         for (m = 0; m < 9; ++m) {
-            this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 142));
+            this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 142 + 18));
         }
     }
 
