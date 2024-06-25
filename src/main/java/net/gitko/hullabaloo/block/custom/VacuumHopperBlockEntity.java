@@ -60,7 +60,8 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
     private int[] outputs = {1, 2, 3, 4, 5, 6};
     public int vacuumReach = 3;
     public static final int MAX_REACH = 5;
-    public static final int FILTER_SLOT_INDEX = 10;
+    public static final int FILTER_SLOT_INDEX = 0;
+    public boolean legacyFilterSlotFixed = true;
     private int transferCooldown = 0;
 
     public VacuumHopperBlockEntity(BlockPos pos, BlockState state) {
@@ -79,6 +80,15 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
 
     public static void tick(World world, BlockPos pos, BlockState state, VacuumHopperBlockEntity be) {
         if (world.isClient()) return;
+
+        if (!be.legacyFilterSlotFixed) {
+            be.legacyFilterSlotFixed = true;
+            ItemStack oldFilterSlot = be.getStack(10).copy();
+            ItemStack newFilterSlot = be.getStack(VacuumHopperBlockEntity.FILTER_SLOT_INDEX).copy();
+            be.setStack(VacuumHopperBlockEntity.FILTER_SLOT_INDEX, oldFilterSlot);
+            be.setStack(10, newFilterSlot);
+            be.markDirty();
+        }
 
         // Auto-fix inputs and outputs if lengths incorrect
         if (be.getInputs().length < 6) {
@@ -124,13 +134,6 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
         }
 
         int reach = be.getVacuumReach();
-
-        // Animation
-        if (world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) <= 1) {
-            world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), 4));
-        } else {
-            world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) - 1));
-        }
 
         // Pull items towards vacuum hopper
         for (var i = 0; i < be.getDetectedList().size(); i++) {
@@ -252,6 +255,13 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
                 }
             }
         }
+
+        // Animation
+        if (world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) <= 1) {
+            world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), 4));
+        } else {
+            world.setBlockState(pos, state.with(IntProperty.of("anim", 1, 4), world.getBlockState(pos).get(IntProperty.of("anim", 1, 4)) - 1));
+        }
     }
 
     // Not sure if this is correct or not, pretty much just a guess
@@ -327,6 +337,7 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
                         if (checkedStack.isEmpty()) {
                             inv.setStack(i, itemToMove.copy());
                             be.removeStack(itemToMoveIndex);
+                            be.markDirty();
                             break;
 
                         } else if (itemToMove.getItem() == checkedStack.getItem()) {
@@ -340,6 +351,7 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
                                         // add to checked stack
                                         checkedStack.setCount(checkedStack.getCount() + 1);
                                         itemToMove.setCount(itemToMove.getCount() - 1);
+                                        be.markDirty();
                                     }
                                 }
                             }
@@ -443,6 +455,9 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
         this.vacuumReach = nbt.getInt("vacuumReach");
         this.redstoneMode = nbt.getInt("redstoneMode");
         this.pushMode = nbt.getInt("pushMode");
+        if (!nbt.contains("legacyFilterSlotFixed")) {
+            this.legacyFilterSlotFixed = false;
+        }
     }
 
     @Override
@@ -453,6 +468,7 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
         nbt.putInt("vacuumReach", this.vacuumReach);
         nbt.putInt("redstoneMode", this.redstoneMode);
         nbt.putInt("pushMode", this.pushMode);
+        nbt.putBoolean("legacyFilterSlotFixed", this.legacyFilterSlotFixed);
 
         super.writeNbt(nbt);
     }
@@ -468,13 +484,15 @@ public class VacuumHopperBlockEntity extends BlockEntity implements ImplementedI
         return createNbt();
     }
 
+    // only needs to be called whenever the client needs the data for rendering immediately (blocks such as signs and banners need to use a function like this whenever data is updated)
+    // just markDirty can be called for blocks such as chests and furnaces which only need the data when the GUI is opened
     public void sync() {
-        assert world != null;
-        if (!world.isClient()) {
-            //world.markDirty(getPos());
-
+        assert this.getWorld() != null;
+        if (!this.getWorld().isClient()) {
             // updates comparators and marks dirty
             this.markDirty();
+            // let client know that the block has been updated
+            this.getWorld().updateListeners(this.getPos(), this.getCachedState(), this.getWorld().getBlockState(this.getPos()), Block.NOTIFY_LISTENERS);
         }
     }
 
