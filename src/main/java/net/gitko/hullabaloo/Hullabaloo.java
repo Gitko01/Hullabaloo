@@ -13,10 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.reborn.energy.api.EnergyStorage;
 
+import java.text.DecimalFormat;
+
 public class Hullabaloo implements ModInitializer {
 
     public static final String MOD_ID = "hullabaloo";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+    // Decimal formatter for all GUIs in this mod
+    public static final DecimalFormat DF = new DecimalFormat( "###,###" );
 
     // Screens
     public static ScreenHandlerType<VacuumHopperScreenHandler> VACUUM_HOPPER_SCREEN_HANDLER;

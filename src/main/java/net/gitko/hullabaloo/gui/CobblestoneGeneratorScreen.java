@@ -81,15 +81,15 @@ public class CobblestoneGeneratorScreen extends HandledScreen<CobblestoneGenerat
 
             switch (redstoneMode) {
                 case 1 -> {
-                    v = 18;
+                    v = 10;
                 }
                 case 2 -> {
-                    v = 35;
+                    v = 19;
                 }
             }
 
             redstoneModeButton = this.addDrawableChild(createRedstoneModeWidget(
-                    x, y, 8, 17, 16, 16, u, v, 0, TEXTURE, 256, 256, ButtonWidget::onPress, Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".redstoneMode." + redstoneMode)), Text.literal(""), client));
+                    x, y, 8, 8, 8, 8, u, v, 0, TEXTURE, 256, 256, ButtonWidget::onPress, Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".redstoneMode." + redstoneMode)), Text.literal(""), client));
         }
 
         // Create push mode button
@@ -107,7 +107,7 @@ public class CobblestoneGeneratorScreen extends HandledScreen<CobblestoneGenerat
             }
 
             pushModeButton = this.addDrawableChild(createPushModeWidget(
-                    x, y, 8, 36, 32, 16, u, v, 0, TEXTURE, 256, 256, ButtonWidget::onPress, Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".pushMode." + pushMode)), Text.literal(""), client));
+                    x, y, 8, 40, 32, 16, u, v, 0, TEXTURE, 256, 256, ButtonWidget::onPress, Tooltip.of(Text.translatable("gui." + Hullabaloo.MOD_ID + ".pushMode." + pushMode)), Text.literal(""), client));
         }
 
         if (redstoneMode == -1) {
@@ -132,10 +132,10 @@ public class CobblestoneGeneratorScreen extends HandledScreen<CobblestoneGenerat
                         this.setUV(176, 1);
                     }
                     case 1 -> {
-                        this.setUV(176, 18);
+                        this.setUV(176, 10);
                     }
                     case 2 -> {
-                        this.setUV(176, 35);
+                        this.setUV(176, 19);
                     }
                 }
 

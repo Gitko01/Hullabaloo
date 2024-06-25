@@ -45,25 +45,24 @@ public class CobblestoneGeneratorScreenHandler extends ScreenHandler {
 
         int m;
         int l;
-        // Our inventory
-        for (m = 0; m < 3; ++m) {
-            for (l = 0; l < 6; ++l) {
-                this.addSlot(new Slot(inventory, l + m * 6, 62 + l * 18, 17 + m * 18));
-            }
-        }
         // Upgrade slot
-        this.addSlot(new Slot(inventory, CobblestoneGeneratorBlockEntity.UPGRADE_SLOT_INDEX, 27, 17) {
+        this.addSlot(new Slot(inventory, CobblestoneGeneratorBlockEntity.UPGRADE_SLOT_INDEX, 8, 20) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return stack.getItem() == ModItems.IRON_COBBLESTONE_GENERATOR_UPGRADE ||
-                                stack.getItem() == ModItems.GOLD_COBBLESTONE_GENERATOR_UPGRADE ||
-                                stack.getItem() == ModItems.DIAMOND_COBBLESTONE_GENERATOR_UPGRADE ||
-                                stack.getItem() == ModItems.AMETHYST_COBBLESTONE_GENERATOR_UPGRADE ||
-                                stack.getItem() == ModItems.NETHERITE_COBBLESTONE_GENERATOR_UPGRADE ||
-                                stack.getItem() == ModItems.ULTIMATE_COBBLESTONE_GENERATOR_UPGRADE;
+                        stack.getItem() == ModItems.GOLD_COBBLESTONE_GENERATOR_UPGRADE ||
+                        stack.getItem() == ModItems.DIAMOND_COBBLESTONE_GENERATOR_UPGRADE ||
+                        stack.getItem() == ModItems.AMETHYST_COBBLESTONE_GENERATOR_UPGRADE ||
+                        stack.getItem() == ModItems.NETHERITE_COBBLESTONE_GENERATOR_UPGRADE ||
+                        stack.getItem() == ModItems.ULTIMATE_COBBLESTONE_GENERATOR_UPGRADE;
             }
         });
-
+        // Our inventory
+        for (m = 0; m < 3; ++m) {
+            for (l = 0; l < 6; ++l) {
+                this.addSlot(new Slot(inventory, 1 + l + m * 6, 62 + l * 18, 20 + m * 18));
+            }
+        }
         // The player inventory
         for (m = 0; m < 3; ++m) {
             for (l = 0; l < 9; ++l) {
